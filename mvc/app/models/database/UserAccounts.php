@@ -2,20 +2,21 @@
 
 namespace Mrkvon\Ditup\Model\Database;
 
-use PDO;
-use PDOException;
+use PDO;    //to be removed when DbAccess will be finished
+use PDOException;   //to be removed when DbAccess will be finished
 use Exception;
 
 require_once dirname(__FILE__).'/db-login.php';
+require_once dirname(__FILE__).'/DbAccess.php';
 
-class UserAccounts
+class UserAccounts extends DbAccess
 {
 
     public static function insertIntoDatabase(Array $values){
         if(isset($values, $values['username'], $values['email'], $values['password'], $values['salt'], $values['iterations'])){
             $pdo = new PDO('mysql:host='.Login\HOSTNAME.';dbname='. Login\DATABASE .';charset=utf8', Login\USERNAME, Login\PASSWORD);
     
-    //****************without these lines it will not catch error and not transaction well. not rollback.********
+            //****************without these lines it will not catch error and not transaction well. not rollback.********
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
             // Start the transaction. PDO turns autocommit mode off depending on the driver, you don't need to implicitly say you want it off
@@ -41,8 +42,7 @@ class UserAccounts
             catch(PDOException $e)
             {
                 $pdo->rollBack();
-                print_r($e);
-              //$outcome=htmlentities(print_r($e,true));
+                throw new Exception('database problem: ' . $e);
               // Report errors
             }
             unset($pdo);
@@ -60,34 +60,12 @@ class UserAccounts
         }
     }
     
-    public static function updateVerifyCode($values){
+    public function updateVerifyCode($values){
         if(isset($values, $values['username'], $values['email'], $values['verify_code'], $values['delete_code'])){
-            $pdo = new PDO('mysql:host='.Login\HOSTNAME.';dbname='. Login\DATABASE .';charset=utf8', Login\USERNAME, Login\PASSWORD);
-    
-    //****************without these lines it will not catch error and not transaction well. not rollback.********
-            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-            // Start the transaction. PDO turns autocommit mode off depending on the driver, you don't need to implicitly say you want it off
-            $pdo->beginTransaction();
-            // 
-            try
-            {
-                // Prepare the statements
-                $statement=$pdo->prepare('UPDATE user_accounts SET verify_code=:vc, delete_code=:dc, code_created=CURRENT_TIMESTAMP WHERE username=:un AND email=:em');
-                $statement->bindValue(':un',strval($values['username']), PDO::PARAM_STR);
-                $statement->bindValue(':em',strval($values['email']), PDO::PARAM_STR);
-                $statement->bindValue(':vc',strval($values['verify_code']), PDO::PARAM_STR);
-                $statement->bindValue(':dc',strval($values['delete_code']), PDO::PARAM_STR);
-                $statement->execute();
-                
-                $pdo->commit();
-            }
-            catch(PDOException $e)
-            {
-                $pdo->rollBack();
-                throw new Exception('database problem: ' . $e);
-            }
-            unset($pdo);
+            
+            $this->dbConnect();
+            $this->dbExecute('UPDATE user_accounts SET verify_code=:vc, delete_code=:dc, code_created=CURRENT_TIMESTAMP WHERE username=:un AND email=:em', [':un' => $values['username'], ':em' => $values['email'], ':vc' => $values['verify_code'], ':dc' => $values['delete_code']]);
+            $this->dbDisconnect();
         }
         else{
             if(!isset($values)) throw new Exception ('Users::updateVerifyCode Error: array of values must be provided!');
@@ -132,6 +110,20 @@ class UserAccounts
 
         return $data;
     }    
+    
+    public function updateVerified($values){
+        if(isset($values, $values['username'], $values['verify_code'])){
+            $this->dbConnect();
+            $this->dbExecute('UPDATE user_accounts SET verified=TRUE WHERE username=:un AND verify_code=:vc AND TIME_TO_SEC(TIMEDIFF(NOW(),code_created))<21600' , [':un'=>$values['username'], ':vc' => $values['verify_code']]);
+            $this->dbDisconnect();
+        }
+        else{
+            if(!isset($values)) throw new Exception ('Users::updateVerifyCode Error: array of values must be provided!');
+            elseif(!isset($values['username'])) throw new Exception ('Users::updateVerifyCode Error: username must be provided!');
+            elseif(!isset($values['verify_code'])) throw new Exception ('Users::updateVerifyCode Error: verification code must be provided!');
+            else throw new Exception ('general exception, debugging will be needed');
+        }
+    }
     
     public static function selectAccountByEmail($email){        
         require_once dirname(__FILE__).'/db-login.php';

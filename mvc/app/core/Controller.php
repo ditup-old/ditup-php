@@ -6,14 +6,14 @@ class Controller
     {
         //*** starting session and setting session variables if they don't exist  */
         session_start();
-        if(!isset($_SESSION['loggedin'],$_SESSION['user']))
+        if(!isset($_SESSION['loggedin'],$_SESSION['username']))
         {
             $_SESSION['loggedin']=false;
-            $_SESSION['user']='test';
+            $_SESSION['username']='test';
         }
 
-        $this->loggedin=$_SESSION['loggedin'];
-        $this->user=$_SESSION['user'];
+        $this->loggedin = $_SESSION['loggedin'];
+        $this->username = $_SESSION['username'];
     }
 
     protected function model($model)

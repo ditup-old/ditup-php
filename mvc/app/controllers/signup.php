@@ -33,6 +33,7 @@ class Signup extends Controller
                     /***
                     possible errors:
                     1:  email not valid
+                        email already used
                     2:  username not valid (a-z,0-9,.,-,_)
                     4:  username already used
                     8:  password not strong enough
@@ -51,6 +52,11 @@ class Signup extends Controller
 
     private function bot(){
         return false;
+    }
+
+    public function verify($username, $verify_code){
+        $user=$this->model('User');
+        $user->verify(['username' => $username, 'verify_code' => $verify_code]);
     }
     
 }
