@@ -1,4 +1,7 @@
 <?php
+namespace Mrkvon\Ditup\Controller;
+
+use Mrkvon\Ditup\Core\Controller as Controller;
 
 class Logout extends Controller
 {   
@@ -6,9 +9,12 @@ class Logout extends Controller
     {
         if($this->loggedin){
             session_destroy();
+            echo 'successfuly logged out';
+            header("Location:/"); //improve!!
         }
         else {
             echo 'no need to log out. you are not logged in.';
+            header("Location:/"); //improve!!
         }
     }
 

@@ -1,5 +1,9 @@
 <?php
 
+namespace Mrkvon\Ditup\Controller;
+
+use Mrkvon\Ditup\Core\Controller as Controller;
+
 class Login extends Controller
 {   
     public function index()
@@ -17,10 +21,11 @@ class Login extends Controller
                 
                 $user=$this->model('User');
 
-                if($user->login(['username' => $username, 'password' => $password])){
+                if($user->login(['username' => $username, 'password' => $password], $errors)){
                     $_SESSION['username'] = $username;
                     $_SESSION['loggedin'] = true;
                     echo 'successfuly logged in (finish this process!)';
+                    header('Location:/');
                 }
                 else{
                     $this->view('login/index', ['errors'=>$errors, 'values'=>['username' => $username]]);

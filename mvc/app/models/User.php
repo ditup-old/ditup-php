@@ -1,4 +1,7 @@
 <?php
+
+namespace Mrkvon\Ditup\Model;
+
 use Mrkvon\Ditup\Model\Database as Database;
 //use Exception;
 
@@ -51,7 +54,7 @@ class User
         else throw new Exception('username and password must be provided');
     }
     
-    private function exists($username){
+    public static function exists($username){
 //        echo dirname(__FILE__);
 //        require_once dirname(__FILE__).'/database/UserAccounts.php';
         //$dbusr = new Database\UserAccounts();
@@ -114,11 +117,11 @@ class User
         return substr($code, 0, $length);
     }
 
-    private static function hashPassword($password, $salt, $iterations){
+    public static function hashPassword($password, $salt, $iterations){
         return hash_pbkdf2 ('sha256' , $password , $salt, $iterations);
     }
 
-    private static function compareHashes($a, $b) { 
+    public static function compareHashes($a, $b) { 
         if (!is_string($a) || !is_string($b)) { 
             return false; 
          } 

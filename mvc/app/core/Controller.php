@@ -1,4 +1,7 @@
 <?php
+namespace Mrkvon\Ditup\Core;
+
+use Mrkvon\Ditup\Model as Model;
 
 class Controller
 {
@@ -19,7 +22,8 @@ class Controller
     protected function model($model)
     {
         require_once '../app/models/' . $model . '.php';
-        return new $model();
+        $mmodel='Mrkvon\Ditup\Model\\'.$model;
+        return new $mmodel();
     }
     
     protected function view($view, $data = [])

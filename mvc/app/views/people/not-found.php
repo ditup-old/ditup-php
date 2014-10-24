@@ -8,7 +8,7 @@ $page=new Page;
 $page->title('main page');
 $page->add((new Header($data['loggedin'], $data['user']))->generate());
 
-$page->add('<div>this is general people page</div>');
+$page->add('member ' . $data['member'] . ' was not found or is hidden from you');
 
 echo $page->generate();
 

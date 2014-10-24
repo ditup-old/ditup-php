@@ -8,7 +8,7 @@ $page=new Page;
 $page->title('main page');
 $page->add((new Header($data['loggedin'], $data['user']))->generate());
 
-$page->add('<div>this is general people page</div>');
+$page->add('<div>profile of ' . $data['member'] . ' (<a href="/people/' . $data['member'] . '/edit">edit</a>)</div>');
 
 echo $page->generate();
 

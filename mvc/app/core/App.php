@@ -1,4 +1,7 @@
 <?php
+namespace Mrkvon\Ditup\Core;
+
+use Mrkvon\Ditup\Controller as Controller;
 
 class App
 {
@@ -20,6 +23,8 @@ class App
         }
 
         require_once '../app/controllers/' . $this->controller . '.php';
+        
+        $this->controller = 'Mrkvon\\Ditup\\Controller\\'.$this->controller;
         
         $this->controller = new $this->controller;
         

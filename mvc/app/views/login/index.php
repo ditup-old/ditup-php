@@ -19,6 +19,7 @@ $content='<form method="post" action="">
     <tr><td></td><td><input type="submit" name="login" value="log in"></td></tr>
 </table>
 </form>';
+$content.=isset($data['errors']) ? print_r($data['errors'],true) : '';
 
 $page->add($content);
 

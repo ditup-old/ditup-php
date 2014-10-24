@@ -1,12 +1,16 @@
 <?php
 
+namespace Mrkvon\Ditup\Controller;
+
+use Mrkvon\Ditup\Core\Controller as Controller;
+
 class Signup extends Controller
 {   
     public function index()
     {
         if($this->loggedin){
             //***sign up works only if person is not logged in*/
-            $this->view('signup/log-out-to-sign-up');
+            $this->view('signup/log-out-first');
         }
         else {
             if(isset($_POST, $_POST['email'], $_POST['username'], $_POST['password'], $_POST['password2'], $_POST['full-name'])){
