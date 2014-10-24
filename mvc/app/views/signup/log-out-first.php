@@ -1,12 +1,9 @@
 <?php
 
-require_once '../app/views/general/Page.php';
-require_once '../app/views/general/Header.php';
+require_once '../app/views/general/PageWithHeader.php';
 
-
-$page=new Page;
+$page=new PageWithHeader();
 $page->title('main page');
-$page->add((new Header())->generate());
 
 $values=[
     'username'=>(isset($data, $data['values'], $data['values']['username']) ? $data['values']['username'] : ''),

@@ -1,0 +1,35 @@
+/**style for header of pages with header. Linked from view class PageWithHeader*/
+
+/**layout**/
+
+div.main-menu-top>ul>li
+{
+    display : inline-block;
+    vertical-align : top;
+    margin-left:10px;
+}
+
+div.main-menu-top>ul ul
+{
+    position:absolute;
+    display:none;
+    list-style-type : none;
+    padding:5px;
+}
+
+div.main-menu-top>ul>li:hover ul
+{
+    display:block;
+}
+
+/**colors**/
+
+div.main-menu-top>ul ul
+{
+    background-color : #bcf;
+}
+
+div.main-menu-top>ul
+{
+    background-color:#cdf;
+}

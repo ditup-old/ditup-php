@@ -11,28 +11,28 @@ class Header
 
     function generate()
     {
-        return '<div>
+        return '<div class="main-menu-top">
     <ul>
-        <li>ditup (logo will be here)
+        <li><a href="/" ><img src="/img/logo.png" style="height:20px;" /> ditup</a>
             <ul>
                 <li><a href="/start">about</a></li>
                 <li><a href="/development">development</a></li>
                 <li>feedback</li>
             </ul>
         </li>
-        <li>people
+        <li><a href="/people">people</a>
             <ul>' . ($this->loggedin ? '<li><a href="/people/' . $this->user . '">my profile</a></li>' : '') . '
                 <li>groups</li>
             </ul>
         </li>
-        <li>projects
+        <li><a href="/projects" >projects</a>
             <ul>
                 <li>explore (categories, tags)</li>' . ($this->loggedin ? '
                 <li><a href="/projects/create">+ create new project</a></li>' : '') . '
                 
             </ul>
         </li>
-        <li>community
+        <li><a href="/community" >community</a>
             <ul>
                 <li><a href="/wiki">wiki</a></li>
                 <li>support</li>

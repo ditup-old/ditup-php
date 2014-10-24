@@ -1,12 +1,9 @@
 <?php
 
-require_once '../app/views/general/Page.php';
-require_once '../app/views/general/Header.php';
+require_once '../app/views/general/PageWithHeader.php';
 
-
-$page=new Page;
-$page->title('main page');
-$page->add((new Header($data['loggedin'], $data['user']))->generate());
+$page=new PageWithHeader($data['loggedin'], $data['user']);
+$page->title('profile::'.$data['user']);
 
 $page->add('<div>profile of ' . $data['member'] . ' (<a href="/people/' . $data['member'] . '/edit">edit</a>)</div>');
 

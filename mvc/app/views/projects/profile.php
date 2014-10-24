@@ -1,13 +1,10 @@
 <?php
 
-require_once '../app/views/general/Page.php';
-require_once '../app/views/general/Header.php';
+require_once '../app/views/general/PageWithHeader.php';
 
 
-$page=new Page;
-$page->title('main page');
-$page->add((new Header($data['loggedin'], $data['username']))->generate());
-
+$page=new PageWithHeader($data['loggedin'], $data['username']);
+$page->title('projects::profile');
 
 $content='
     <div>

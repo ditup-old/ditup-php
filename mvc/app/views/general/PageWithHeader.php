@@ -1,17 +1,14 @@
 <?php
 
-class Page{
-  
-    /**head is basic data necessary for creating page head*/
-    /**title:page title, css: array of stylesheets*/
-    protected $root_path='/';
-    protected $head=array('title'=>'','css'=>['/css/reset.css']);
-    protected $body='';
-    /**scripts are [{link:"",properties{name:value}}] **/
-    protected $js=array();
+require_once('Page.php');
+require_once('Header.php');
 
+class PageWithHeader extends Page {
 
-    function __construct(){
+    function __construct($loggedin=false, $user='foo'){
+        $this->css($this->root_path.'css/header.css');
+        $this->add((new Header($loggedin, $user))->generate());
+
         return $this;
     }
 
