@@ -2,6 +2,21 @@
 
 /**layout**/
 
+div.main-menu-top
+{
+    height:40px;
+    position:fixed;
+    top:0;
+    left:0;
+    background-color:#cdf;
+    width:100%;
+}
+
+body
+{
+    margin-top:40px;
+}
+
 div.main-menu-top>ul>li
 {
     display : inline-block;
@@ -31,5 +46,4 @@ div.main-menu-top>ul ul
 
 div.main-menu-top>ul
 {
-    background-color:#cdf;
 }

@@ -8,10 +8,10 @@ $page->title('profile::'.$data['member']);
 
 $content = '
     <div>
-        each of these menu things will be optional
-        <div>
-            (top) member name (----' . $data['member'] . '----), picture and action buttons
-            <ul>action buttons
+        <!--each of these menu things will be optional-->
+        <div class="profile-header" >
+            <img class="header-avatar" src="" /><h1 class="header-user-name">'. $data['member'] . '</h1>
+            <ul class="header-action-menu">
                 <li>message</li>
                 <li>create connection (friends etc.)</li>
                 <li>follow</li>
@@ -20,24 +20,28 @@ $content = '
                 <li>edit if my profile</li>
             </ul>
         </div>
-        <div>
-            (side) info menu
+        <nav class="side-menu">
+            <!--(side) info menu-->
             <ul>
-                <li>general summary (landing page)</li>
-                <li>personal info</li>
-                <li>member of what projects?</li>
-                <li>interests, what to do</li>
-                <li>recent activity</li>
-                <li>connections</li>
-                <li>references</li>
-                <li>....</li>
+                <li><a href="/user/' . $data['member'] . '">general summary (landing page)</a></li>
+                <li><a href="/user/' . $data['member'] . '/info">personal info</a></li>
+                <li><a href="/user/' . $data['member'] . '/projects">projects</a></li>
+                <li><a href="/user/' . $data['member'] . '/interests">interests, what she wants to do</a></li>
+                <li><a href="/user/' . $data['member'] . '/activity">recent activity</a></li>
+                <li><a href="/user/' . $data['member'] . '/connections">connections (friends)</a></li>
+                <li><a href="/user/' . $data['member'] . '/references">references (' . '0' . ')</a></li>
             </ul>
-        </div>
-        <div>
-            all the info will be in this div. this is a "content div".
+        </nav>
+        <div class="user-profile-content">
+            <table>
+                <tr><td>username</td><td>' . $data['member'] . '</td></tr>
+                <tr><td>member since</td><td>September 2014</td></tr>
+            </table>
         </div>
     </div>
 ';
+
+$page->css('/css/profile.css');
 
 $page->add($content);
 

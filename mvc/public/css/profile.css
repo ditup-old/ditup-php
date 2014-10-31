@@ -1,0 +1,55 @@
+div.profile-header
+{
+    background-color:#fcc;
+    min-height:100px;
+}
+
+div.profile-header>img.header-avatar
+{
+    height:100px;
+    width:100px;
+    background-color:red;
+    float:left;
+}
+
+h1.header-user-name
+{
+    font-weight:bold;
+    font-size:50px;
+}
+
+div.profile-header>ul.header-action-menu
+{
+    list-style:none;
+}
+
+div.profile-header>ul.header-action-menu>li
+{
+    display:inline-block;
+    background-color:#f87;
+    margin:5px 10px 5px 0px;
+    padding:5px;
+    border-radius:5px;
+    border:1px solid red;
+}
+
+nav.side-menu
+{
+    background-color:#322;
+    color:#fee;
+    position:absolute;
+    width:170px;
+    padding:10px;
+    border:5px solid #fdd;
+}
+
+nav.side-menu>ul>li 
+{
+    padding:3px;
+}
+
+div.user-profile-content
+{
+    margin-left:200px;
+    padding:10px;
+}

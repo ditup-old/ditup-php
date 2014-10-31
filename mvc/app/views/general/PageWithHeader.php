@@ -62,7 +62,7 @@ _END;
         }
         $code.="</head>";
         /**********output body************/
-        $code.='<body style="background:#fff;"><div id="main_wrapper" style="height:100%;width:100%;position:absolute;">';
+        $code.='<body style="background:#fff;">';
         
     /************output header*********/
         
@@ -71,8 +71,6 @@ _END;
         
         /**end output header*********************/
         $code.= $this->body;
-
-        $code.='</div>';
 
         /**scripts adding**/
         

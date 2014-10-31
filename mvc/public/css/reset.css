@@ -50,3 +50,12 @@ q:before, q:after {
 blockquote, q {
 	quotes: "" "";
 }
+
+a {
+    text-decoration:underline;
+    color:inherit;
+}
+
+a:hover {
+    text-decoration:none;
+}

@@ -21,7 +21,7 @@ class Header
             </ul>
         </li>
         <li><a href="/people">people</a>
-            <ul>' . ($this->loggedin ? '<li><a href="/people/' . $this->user . '">my profile</a></li>' : '') . '
+            <ul>' . ($this->loggedin ? '<li><a href="/user/' . $this->user . '">my profile</a></li>' : '') . '
                 <li>groups</li>
             </ul>
         </li>
@@ -42,7 +42,7 @@ class Header
         '
         <li>me
             <ul>
-                <li><a href="/people/' . $this->user . '">my profile</a></li>
+                <li><a href="/user/' . $this->user . '">my profile</a></li>
                 <li>messages</li>
                 <li>my projects</li>
                 <li>...</li>

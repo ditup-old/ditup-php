@@ -13,11 +13,19 @@ class Projects extends Controller
 {
     public function index($action='')
     {
-        echo 'general projects page (new projects and ideas, project map, successful projects etc. (project main page, rozcestnik))';
+        $this->view('projects/index', ['loggedin' => $this->loggedin, 'user-me' => $this->username]);
     }
 
     public function create()
     {
-        echo 'create new project (only if you\'re logged in)';
+    /***if user is logged in, go to create page.
+        if user is not logged in, go to /log in first
+    *****/
+        if($this->loggedin){
+            $this->view('projects/create', ['loggedin' => $this->loggedin, 'user-me' => $this->username]);
+        }
+        else{
+            $this->view('projects/create-log-in-first', ['loggedin' => $this->loggedin, 'user-me' => $this->username]);
+        }
     }
 }
