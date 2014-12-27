@@ -1,17 +1,14 @@
 <?php
 
-class Page{
-  
-    /**head is basic data necessary for creating page head*/
-    /**title:page title, css: array of stylesheets*/
-    protected $root_path='/';
-    protected $head=array('title'=>'','css'=>['/css/reset.css']);
-    protected $body='';
-    /**scripts are [{link:"",properties{name:value}}] **/
-    protected $js=array();
+require_once('Page.php');
+require_once('Header.php');
 
+class PageWithHeader extends Page {
 
-    function __construct(){
+    function __construct($loggedin=false, $user='foo'){
+        $this->css($this->root_path.'css/header.css');
+        $this->add((new Header($loggedin, $user))->generate());
+
         return $this;
     }
 
@@ -34,7 +31,7 @@ class Page{
     public function js($link,$properties=array()){
         $script=array('link'=>$link,'properties'=>array());
         foreach($properties as $name=>$value){
-            $script['properties'][$name]=$value;
+        $script['properties'][$name]=$value;
         }
         $this->js[]=$script;
         return $this;
@@ -52,25 +49,20 @@ class Page{
 _END;
     /*********output head*************/
         $code.=<<<_END
-
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 _END;
-        $code.='
-    <title>ditup::'.$this->head['title'].'</title>';
+        $code.='<title>ditup::'.$this->head['title'].'</title>';
     //     $code.='<link rel="icon" type="image/png" href="'.$this->root_path.'img/livegraph_icon.png" />';
 //         $code.='<link rel="stylesheet" type="text/css" href="'.$this->root_path.'css/reset.css" />';
         //$code.='<link rel="stylesheet" type="text/css" href="'.$this->root_path.'css/topbar.css" />';
 
         foreach($this->head['css'] as $csslink){
-            $code.='
-    <link rel="stylesheet" type="text/css" href="'.$csslink.'" />';
+        $code.='<link rel="stylesheet" type="text/css" href="'.$csslink.'" />';
         }
-        $code.='
-</head>';
+        $code.="</head>";
         /**********output body************/
-        $code.='
-<body style="background:#fff;">';
+        $code.='<body style="background:#fff;">';
         
     /************output header*********/
         
@@ -78,7 +70,6 @@ _END;
 
         
         /**end output header*********************/
-        $code.="\n";
         $code.= $this->body;
 
         /**scripts adding**/
@@ -94,11 +85,9 @@ _END;
             $code.='></script>';
         }
         
-        $code.='
-</body>';
+        $code.='</body>';
         /**********finish*******/
-        $code.='
-</html>';
+        $code.='</html>';
         return $code;
     }
     

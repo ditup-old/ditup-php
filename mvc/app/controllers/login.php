@@ -10,12 +10,21 @@ class Login extends Controller
     {
         if($this->loggedin){
             //***sign up works only if person is not logged in*/
-            $this->view('logout');
+            $this->view(
+                'general/error',
+                [
+                    'loggedin' => $this -> loggedin,
+                    'user-me' => $this -> username,
+                    'message' => 'You are already logged in as ' . $this->username . '. You may want to <a href="/logout">log out</a> to log in as different user.'
+                ]
+            );
         }
         else {
             if(isset($_POST, $_POST['username'], $_POST['password'])){
+                //print_r($_POST);
                 $username = $_POST['username'];
                 $password = $_POST['password'];
+                $persistent = (isset($_POST['persistent']) && $_POST['persistent'] == true) ? true : false;
                 
                 $errors=[];
                 
@@ -24,7 +33,14 @@ class Login extends Controller
                 if($user->login(['username' => $username, 'password' => $password], $errors)){
                     $_SESSION['username'] = $username;
                     $_SESSION['loggedin'] = true;
-                    echo 'successfuly logged in (finish this process!)';
+                    $_SESSION['from_form'] = true;
+
+                    if($persistent){
+                        $cookie_login = self::staticModel('CookieLogin');
+                        $cookie_login::cleanLoginCookies();
+                        $cookie_login::createLoginCookie(['username' => $username]);
+                    }
+                    //echo 'successfuly logged in (finish this process!)';
                     header('Location:/');
                 }
                 else{
@@ -49,4 +65,5 @@ class Login extends Controller
         $user->verify(['username' => $username, 'verify_code' => $verify_code]);
     }
     
+
 }

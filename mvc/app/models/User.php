@@ -3,13 +3,23 @@
 namespace Mrkvon\Ditup\Model;
 
 use Mrkvon\Ditup\Model\Database as Database;
-//use Exception;
+use Exception;
 
 require_once dirname(__FILE__).'/database/UserAccounts.php';
 
 class User
 {
-    private $username;
+    /***for function changePassword***/
+    const ERROR_USERNAME_NOT_EXIST = 'username doesn\'t exist';
+    const ERROR_PASSWORD_INCORRECT = 'password is incorrect';
+    const ERROR_PASSWORDS_DIFFERENT = 'passwords don\'t match';
+    const PASSWORD_REGEX = '/(?=^.{8,128}$)(?=.*[a-zA-Z0-9])(?=.*[^A-Za-z0-9]).*$/';
+    const ERROR_PASSWORD_INVALID = 'password must be 8-128 characters long and contain some of [a-zA-Z0-9] and some special characters';
+
+    const PASSWORD_HASH_ITERATIONS = 10000;
+    const PASSWORD_SALT_LENGTH = 64;
+    
+    protected $username;
     private $verify_code;
     private $delete_code;
     private $email;
@@ -29,10 +39,10 @@ class User
             unset($dbusr);
 
             //print_r($data);
-            if(sizeof($data)===1 && isset($data[0]['salt'], $data[0]['password'], $data[0]['verified'], $data[0]['iterations'])){
+            if(sizeof($data) === 1 && isset($data[0]['salt'], $data[0]['password'], $data[0]['verified'], $data[0]['iterations'])){
                 if($this::compareHashes($data[0]['password'], $this::hashPassword($values['password'], $data[0]['salt'], $data[0]['iterations']))){
                     if($data[0]['verified']){
-                        $loggedin=true;
+                        $loggedin = true;
                     }
                     else{
                         $errors ['verified']='logged in but not verified';
@@ -66,19 +76,18 @@ class User
 /** this function creates new user in database and sets*********/
 
     public function create(Array $values){
-//        $this->delete_code = $delete_code = $this::createHexCode();
-//        $this->verify_code = $verify_code = $this::createHexCode();
         $this->username = $values['username'];
         $this->email = $values['email'];
-        $salt = $this::createSalt(64);
-        $iterations = 10000;
-        $hash = $this::hashPassword($values['password'], $salt, $iterations);
+        $salt = self::createSalt(self::PASSWORD_SALT_LENGTH);
+        $iterations = self::PASSWORD_HASH_ITERATIONS;
+        $hash = self::hashPassword($values['password'], $salt, $iterations);
 
         $data = ['username' => $values['username'], 'email' => $values['email'], 'password' => $hash, 'salt' => $salt, 'iterations' => $iterations];
 
         $dbua = new Database\UserAccounts();
         $dbua->insertIntoDatabase($data);
         unset($dbua);
+        return true;
     }
 
     public function sendVerificationEmail(){
@@ -98,7 +107,7 @@ class User
         $mail_accepted ? print ('mail accepted') : print ('mail not accepted');
     }
     
-    private static function createSalt($length = 64){
+    protected static function createSalt($length = 64){
         $is_secure;
         //$salt = openssl_random_pseudo_bytes($length, $is_secure);
         
@@ -111,7 +120,7 @@ class User
         }
     }
 
-    private static function createHexCode($length = 32, &$is_secure=null){
+    protected static function createHexCode($length = 32, &$is_secure=null){
         $is_secure;
         $code = bin2hex(openssl_random_pseudo_bytes($length/2.0+1, $is_secure));
         return substr($code, 0, $length);
@@ -160,8 +169,7 @@ class User
     private static function validatePassword($password) {
         /*** length of password is 8 to 128 characters to prevent DDoS attack by letting too long password process through secure hashing functions... ***/
         //$password_match='/(?=^.{8,}$)(?=.[a-zA-Z0-9])(?=.[^a-zA-Z0-9]).*$/';
-        $password_match='/(?=^.{8,128}$)(?=.*[a-zA-Z0-9])(?=.*[^A-Za-z0-9]).*$/';
-        return preg_match($password_match, $password)?true:false;
+        return preg_match(self::PASSWORD_REGEX, $password)?true:false;
     }
     
     /**
@@ -201,7 +209,7 @@ class User
         }
         if(!$this::validatePassword($values['password'])){
             $ret = false;
-            $errors['password'] = 'password must be 8-128 characters long and contain some of [a-zA-Z0-9] and some special characters';
+            $errors['password'] = self::ERROR_PASSWORD_INVALID;'password must be 8-128 characters long and contain some of [a-zA-Z0-9] and some special characters';
         }
         if($values['password']!==$values['password2']){
             $ret = false;
@@ -213,8 +221,58 @@ class User
 
     public function verify($values){
         $ua = new Database\UserAccounts;
-        $ua->updateVerified($values);
+        $ret=$ua->updateVerified($values);
         unset($ua);
+        return $ret;
+    }
+
+    public function changePassword($values, &$errors){
+        /****this function should cover all the process of changing password in database (validation and entering to database)**/
+        /***$values: array (username, old-password, new-password, new-password2)***/
+        if(isset($values, $values['username'], $values['old-password'], $values['new-password'], $values['new-password2'])){
+            $username = $values['username'];
+            $old_password = $values['old-password'];
+            $new_password = $values['new-password'];
+            $new_password2 = $values['new-password2'];
+            $errors = [
+                'old-password'=>[],
+                'new-password'=>[],
+                'new-password2'=>[]
+            ];
+            ///0. validate
+            $valid = true;
+            /////0.0 old pass matches;
+            if(!$this->login(['username' => $username, 'password' => $old_password, []])){
+                $valid=false;
+                $errors['old-password'][]=self::ERROR_PASSWORD_INCORRECT;
+            }
+            /////0.1 new passes are equal;
+            if($new_password!==$new_password2){
+                $valid=false;
+                $errors['new-password2'][] = self::ERROR_PASSWORDS_DIFFERENT;
+            }
+            /////0.2 new password is valid (meets password requirements);
+            if(!self::validatePassword($new_password)){
+                $valid=false;
+                $errors['new-password'][] = self::ERROR_PASSWORD_INVALID;
+            }
+            ///1. enter to database
+            if($valid){
+                $salt = self::createSalt(self::PASSWORD_SALT_LENGTH);
+                $hash = self::hashPassword($values['new-password'], $salt, self::PASSWORD_HASH_ITERATIONS);
+                Database\UserAccounts::updatePassword([
+                    'username' => $username,
+                    'password' => $hash,
+                    'salt' => $salt,
+                    'iterations' => self::PASSWORD_HASH_ITERATIONS
+                ]);
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+        else throw new Exception('first parameter should be array(username, old-password, new-password, new-password2)');
     }
 
 }

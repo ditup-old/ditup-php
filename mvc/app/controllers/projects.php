@@ -2,6 +2,7 @@
 namespace Mrkvon\Ditup\Controller;
 
 use Mrkvon\Ditup\Core\Controller as Controller;
+use \Exception;
 
 /**class Projects*
  * /projects/"action"
@@ -22,10 +23,47 @@ class Projects extends Controller
         if user is not logged in, go to /log in first
     *****/
         if($this->loggedin){
-            $this->view('projects/create', ['loggedin' => $this->loggedin, 'user-me' => $this->username]);
+            if(isset($_POST, $_POST['projectname'], $_POST['url'], $_POST['subtitle'], $_POST['description'], $_POST['create'])){
+                $project_data=[
+                    'creator' => $this->username,
+                    'projectname' => $_POST['projectname'],
+                    'url' => $_POST['url'],
+                    'subtitle' => $_POST['subtitle'],
+                    'description' => $_POST['description'],
+                    'create' => $_POST['create']
+                ];
+
+                try{
+                    $errors = [];
+                    $create_project = $this->model('CreateProject');
+                    if(!$create_project->create($project_data, $errors)){
+                        $this->view('projects/create', [
+                            'loggedin' => $this->loggedin,
+                            'user-me' => $this->username,
+                            'values' => $project_data,
+                            'errors' => $errors
+                        ]); 
+                    }
+                    else{
+                        header('Location:/project/'.$project_data['url'].'/edit');
+                    }
+                }
+                catch(Exception $e){
+                    $this->view('general/error', [
+                        'loggedin' => $this->loggedin,
+                        'user-me' => $this->username,
+                        'message' => print_r($e,true)
+                        ]
+                    );
+                }
+
+            }
+            else{
+                $this->view('projects/create', ['loggedin' => $this->loggedin, 'user-me' => $this->username]);
+            }
         }
         else{
-            $this->view('projects/create-log-in-first', ['loggedin' => $this->loggedin, 'user-me' => $this->username]);
+            $this->view('general/error', ['loggedin' => $this->loggedin, 'user-me' => $this->username, 'message' => 'To create new project, you have to <a href="/login">log in</a> first. If you don\'t have account, you can <a href="/signup">sign up</a>.']);
         }
     }
 }

@@ -25,14 +25,22 @@ class UserAccounts extends DbAccess
             try
             {
                 // Prepare the statements
-                $statement=$pdo->prepare('INSERT INTO user_accounts (username, email, password, salt, iterations) VALUES (:un, :em, :pwd, :salt, :it)');
+                $statement = $pdo->prepare('INSERT INTO user_accounts (username, email, password, salt, iterations, account_created) VALUES (:un, :em, :pwd, :salt, :it, UNIX_TIMESTAMP())');
                 $statement->bindValue(':un',strval($values['username']), PDO::PARAM_STR);
                 $statement->bindValue(':em',strval($values['email']), PDO::PARAM_STR);
                 $statement->bindValue(':pwd',strval($values['password']), PDO::PARAM_STR);
                 $statement->bindValue(':salt',strval($values['salt']), PDO::PARAM_STR);
                 $statement->bindValue(':it',strval($values['iterations']), PDO::PARAM_STR);
                 $statement->execute();
+                unset($statement);
                 
+                $new_user_id = $pdo->lastInsertId();
+
+                $statement = $pdo->prepare('INSERT INTO user_info (user_id) VALUES (:uid)');
+                $statement->bindValue(':uid',strval($new_user_id), PDO::PARAM_STR);
+                $statement->execute();
+                unset($statement);
+
                 //$rows = $statement->fetchAll(PDO::FETCH_ASSOC);
                 //$data = $rows;
       //
@@ -64,7 +72,7 @@ class UserAccounts extends DbAccess
         if(isset($values, $values['username'], $values['email'], $values['verify_code'], $values['delete_code'])){
             
             $this->dbConnect();
-            $this->dbExecute('UPDATE user_accounts SET verify_code=:vc, delete_code=:dc, code_created=CURRENT_TIMESTAMP WHERE username=:un AND email=:em', [':un' => $values['username'], ':em' => $values['email'], ':vc' => $values['verify_code'], ':dc' => $values['delete_code']]);
+            $this->dbExecute('UPDATE user_accounts SET verify_code=:vc, delete_code=:dc, code_created=UNIX_TIMESTAMP() WHERE username=:un AND email=:em', [':un' => $values['username'], ':em' => $values['email'], ':vc' => $values['verify_code'], ':dc' => $values['delete_code']]);
             $this->dbDisconnect();
         }
         else{
@@ -113,9 +121,37 @@ class UserAccounts extends DbAccess
     
     public function updateVerified($values){
         if(isset($values, $values['username'], $values['verify_code'])){
-            $this->dbConnect();
-            $this->dbExecute('UPDATE user_accounts SET verified=TRUE WHERE username=:un AND verify_code=:vc AND TIME_TO_SEC(TIMEDIFF(NOW(),code_created))<21600' , [':un'=>$values['username'], ':vc' => $values['verify_code']]);
-            $this->dbDisconnect();
+            require_once dirname(__FILE__).'/db-login.php';
+            $pdo = new PDO('mysql:host='.Login\HOSTNAME.';dbname='. Login\DATABASE .';charset=utf8', Login\USERNAME, Login\PASSWORD);
+    
+            //****************without these lines it will not catch error and not transaction well. not rollback.********
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+            // Start the transaction. PDO turns autocommit mode off depending on the driver, you don't need to implicitly say you want it off
+            $pdo->beginTransaction();
+            // 
+            try
+            {
+                // Prepare the statements
+                $statement=$pdo->prepare('UPDATE user_accounts SET verified=TRUE WHERE username=:un AND verify_code=:vc AND (UNIX_TIMESTAMP()-code_created)<21600');
+                $statement->bindValue(':un',strval($values['username']), PDO::PARAM_STR);
+                $statement->bindValue(':vc',strval($values['verify_code']), PDO::PARAM_STR);
+                $statement->execute();
+                $affected_rows = $statement->rowCount();
+            
+                // 
+                $pdo->commit();
+                unset($pdo);
+                return $affected_rows>=1 ? true : false;
+            }
+            catch(PDOException $e)
+            {
+                $pdo->rollBack();
+                unset($pdo);
+          
+                $outcome=htmlentities(print_r($e,true));
+                echo $outcome;
+            }
         }
         else{
             if(!isset($values)) throw new Exception ('Users::updateVerifyCode Error: array of values must be provided!');
@@ -157,5 +193,44 @@ class UserAccounts extends DbAccess
         unset($pdo);
 
         return $data;
-    }    
+    }
+
+    public static function updatePassword(Array $values){
+    /**
+     * $values = Array(old-password, new-password, salt, iterations);
+    ****/
+        require_once dirname(__FILE__).'/db-login.php';
+        $pdo = new PDO('mysql:host='.Login\HOSTNAME.';dbname='. Login\DATABASE .';charset=utf8', Login\USERNAME, Login\PASSWORD);
+    
+    //****************without these lines it will not catch error and not transaction well. not rollback.********
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+        // Start the transaction. PDO turns autocommit mode off depending on the driver, you don't need to implicitly say you want it off
+        $pdo->beginTransaction();
+        // 
+        try
+        {
+            // Prepare the statements
+            $statement=$pdo->prepare('UPDATE user_accounts SET password=:pwd, salt=:sa, iterations=:it WHERE username=:un');
+            $statement->bindValue(':pwd',strval($values['password']), PDO::PARAM_STR);
+            $statement->bindValue(':sa',strval($values['salt']), PDO::PARAM_STR);
+            $statement->bindValue(':it',strval($values['iterations']), PDO::PARAM_STR);
+            $statement->bindValue(':un',strval($values['username']), PDO::PARAM_STR);
+            $statement->execute();
+            
+            $pdo->commit();
+            
+            unset($pdo);
+            return true;
+        }
+        catch(PDOException $e)
+        {
+            $pdo->rollBack();
+      
+            // Report errors
+            print_r($e);
+            unset($pdo);
+            exit();
+        }
+    }
 }

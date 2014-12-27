@@ -1,0 +1,59 @@
+2014/14/11 Friday
+
+Me and Agata are near Marmaris in our cs host Necmi's home.
+No internet connection. Trying to design database for projects.
+
+**** added to database
+** not added to database (yet)
+check doc.txt for details.
+
+****projects
+projectname	varchar(64)	(unique)
+project_id	unsigned int not null auto_increment primary key
+url (project-name)	varchar(64)	(unique)
+subtitle	varchar(256)	(short description/main idea/motto of the project)
+visibility (all, logged-in, members) who can see the project
+date of creation	datetime/timestamp	default now()
+description	text
+
+**locations
+??free location database of the internet
+location_id
+
+**project_location
+project_id
+location_id
+(possible multiple locations for project??)
+
+****project_user
+user_id
+project_id
+relationship (admin, member, follower, supporter, await-member)
+joined (timestamp)
+
+**languages
+language database from the internet
+language_id	unsigned int
+
+**project_language
+project_id	unsigned int
+language_id	unsigned int
+
+**project_references
+project_id	unsigned int
+reference	varchar(1024)
+type		(positive/neutral/negative)
+added 		?(datetime/timestamp)
+
+****tags
+tagname (unique)
+tag_id		unsigned int not null auto_increment primary_key
+description	varchar(1024)
+created	timestamp/datetime
+type	(suggested/awaiting/active)
+
+****project_tag
+project_id unsigned int
+tag_id unsigned int
+
+ok. that's it for now.

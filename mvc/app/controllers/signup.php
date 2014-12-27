@@ -10,7 +10,12 @@ class Signup extends Controller
     {
         if($this->loggedin){
             //***sign up works only if person is not logged in*/
-            $this->view('signup/log-out-first');
+            $this->view('general/error', [
+               'loggedin' => $this->loggedin,
+               'user-me' => $this->username,
+               'message' => 'first <a href="/logout">log out</a> to sign up'
+            ]);
+            exit();
         }
         else {
             if(isset($_POST, $_POST['email'], $_POST['username'], $_POST['password'], $_POST['password2'], $_POST['full-name'])){
@@ -27,11 +32,17 @@ class Signup extends Controller
 
                 if(!$this->bot() && $user->validate(['email' => $email, 'username' => $username, 'password' => $password, 'password2' => $password2], $errors)){
                     //*** enter user to database and send verification link */
-                    echo 'all ok. entering data to database.';
+                    //echo 'all ok. entering data to database.';
                     $user->setUsername($username);
                     $user->create(['email' => $email, 'username' => $username, 'password' => $password]);
                     $user->sendVerificationEmail();
                     unset($user);
+                    $this->view('general/message', [
+                        'loggedin' => $this->loggedin,
+                        'user-me' => $this->username,
+                        'message' => $username.', you were successfully signed up. now please check your email inbox and follow verification instructions to finish the process. email verification prevents other entities to misuse your email address on this platform.'
+                    ]);
+                    exit();
                 }
                 else {
                     /***
@@ -45,11 +56,13 @@ class Signup extends Controller
                     32: antibot protection didn't pass
                     */
                     $this->view('signup/index', ['errors'=>$errors, 'values'=>['email' => $email, 'username' => $username]]);
+                    exit();
                 }
 
             }
             else {
                 $this->view('signup/index');
+                exit();
             }
         }
     }
@@ -60,7 +73,19 @@ class Signup extends Controller
 
     public function verify($username, $verify_code){
         $user=$this->model('User');
-        $user->verify(['username' => $username, 'verify_code' => $verify_code]);
+        if($user->verify(['username' => $username, 'verify_code' => $verify_code])){
+            $this->view('general/message', [
+                'loggedin' => $this->loggedin,
+                'user-me' => $this->username,
+                'message' => 'verification was successful. now you can <a href="/login">log in</a>'
+            ]);
+        }
+        else{
+            $this->view('general/error', [
+                'loggedin' => $this->loggedin,
+                'user-me' => $this->username,
+                'message' => 'verification was not successful. possible reasons: verification code incorrect, verification code expired, user already verified. IMPLEMENT resending verification link'
+            ]);
+        }
     }
-    
 }

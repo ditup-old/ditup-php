@@ -14,6 +14,7 @@ class App
 
     public function __construct()
     {
+        //print_r($_SERVER);
         $url = $this->parseUrl();
 
         if(file_exists('../app/controllers/' . $url[0] . '.php'))
@@ -23,6 +24,8 @@ class App
         }
 
         require_once '../app/controllers/' . $this->controller . '.php';
+
+        $this->controller = str_replace(['-'], '', $this->controller);
         
         $this->controller = 'Mrkvon\\Ditup\\Controller\\'.$this->controller;
         
@@ -38,14 +41,15 @@ class App
         }
         
         $this->params = $url ? array_values($url) : [];
+        //print_r($this->params);
     
         call_user_func_array([$this->controller, $this->method],$this->params);
     }
 
     public function parseUrl()
     {
-        if(isset($_GET['url'])) {
-            return $url = explode('/',filter_var(rtrim($_GET['url'], '/'), FILTER_SANITIZE_URL));
+        if(isset($_SERVER['REQUEST_URI'])) {
+            return explode('/',filter_var(trim($_SERVER['REQUEST_URI'], '/'), FILTER_SANITIZE_URL));
         }
     }
 }

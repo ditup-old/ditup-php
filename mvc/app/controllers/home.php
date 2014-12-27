@@ -17,6 +17,6 @@ class Home extends Controller
         $user = $this->model('User');
         $user->name = $this->username;
 
-        $this->view('home/index', ['loggedin' => $this->loggedin, 'name' => $user->name]);
+        $this->view('home/index', ['loggedin' => $this->loggedin, 'user-me' => $user->name]);
     }
 }

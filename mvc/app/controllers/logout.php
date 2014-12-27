@@ -9,6 +9,10 @@ class Logout extends Controller
     {
         if($this->loggedin){
             session_destroy();
+            //deleting login cookies
+            $cookie_login = $this->staticModel('CookieLogin');
+            $cookie_login::destroyLoginCookie();
+
             echo 'successfuly logged out';
             header("Location:/"); //improve!!
         }

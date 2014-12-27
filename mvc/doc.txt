@@ -1,1 +1,29 @@
 https://buckysroom.org/videos.php?cat=88
+
+set mysql database for subscription:
+
+create database ditup;
+create user 'ditup'@'localhost' identified by 'password';
+grant insert, select, update, delete on ditup.* to 'ditup'@'localhost';
+flush privileges;
+
+use ditup;
+create table subscription (subscriber_id int unsigned not null auto_increment primary key, email varchar(320), verified bool default false, verify_code char(32), delete_code char(32), timestamp timestamp default current_timestamp) engine=innodb;
+
+create table user_accounts (user_id int unsigned not null auto_increment primary key, username varchar(64), password char(64), salt char(64), iterations int unsigned, email varchar(320), verified bool default false, verify_code char(32), code_created datetime, delete_code char(32), timestamp timestamp default current_timestamp) engine=innodb;
+
+create table user_info (user_id int unsigned not null, v_about boolean default true, about text, v_age boolean default true, birthday date, v_location boolean default true, location varchar(200)) engine=innodb;
+
+create table user_webpage (user_id int unsigned not null, v_url boolean default true, url varchar(200)) engine=innodb;
+
+
+//project tables
+create table projects (projectname varchar(64), project_id int unsigned not null auto_increment primary key, url varchar(64), subtitle varchar(256), visibility enum('all', 'logged', 'members'), description text, created timestamp default current_timestamp) engine=innodb;
+
+create table project_user (user_id int unsigned not null, project_id int unsigned not null, relationship enum('admin', 'member', 'follower', 'await-member'), joined timestamp default current_timestamp) engine=innodb;
+
+create table project_tag (project_id int unsigned, tag_id int unsigned) engine=innodb;
+
+
+//tags
+create table tags (tagname varchar(128), tag_id int unsigned not null auto_increment primary key, description varchar(1024), type enum('suggested','awaiting','active'), created timestamp default current_timestamp) engine=innodb;

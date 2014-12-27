@@ -1,0 +1,117 @@
+***CREATE TABLE `cookie_login` (
+  `user_id` int(10) unsigned DEFAULT NULL,
+  `hash_password` char(64) DEFAULT NULL,
+  `cookie_code` char(32) DEFAULT NULL,
+  `salt` char(64) DEFAULT NULL,
+  `iterations` int(10) unsigned DEFAULT NULL,
+  `login_time` bigint(12) DEFAULT NULL,
+  `refresh_time` bigint(12) DEFAULT NULL,
+  KEY `FK_user_id` (`user_id`),
+  CONSTRAINT `cookie_login_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user_accounts` (`user_id`)
+) ENGINE=InnoDB
+
+***CREATE TABLE `messages` (
+  `message_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `message` varchar(10000) DEFAULT NULL,
+  `send_time` bigint(12) DEFAULT NULL,
+  `read_time` bigint(12) DEFAULT NULL,
+  PRIMARY KEY (`message_id`)
+) ENGINE=InnoDB
+
+***CREATE TABLE `message_from_user` (
+  `message_id` int(10) unsigned,
+  `user_id` int(10) unsigned
+) ENGINE=InnoDB
+
+***CREATE TABLE `message_to_user` (
+  `message_id` int(10) unsigned,
+  `user_id` int(10) unsigned
+) ENGINE=InnoDB
+
+***CREATE TABLE `message_from_project` (
+  `message_id` int(10) unsigned,
+  `project_id` int(10) unsigned
+) ENGINE=InnoDB
+
+***CREATE TABLE `message_to_project` (
+  `message_id` int(10) unsigned,
+  `project_id` int(10) unsigned
+) ENGINE=InnoDB
+
+***CREATE TABLE `project_tag` (
+  `project_id` int(10) unsigned DEFAULT NULL,
+  `tag_id` int(10) unsigned DEFAULT NULL
+) ENGINE=InnoDB
+
+***CREATE TABLE `user_tag` (
+  `user_id` int(10) unsigned DEFAULT NULL,
+  `tag_id` int(10) unsigned DEFAULT NULL
+) ENGINE=InnoDB
+
+***CREATE TABLE `project_user` (
+  `user_id` int(10) unsigned NOT NULL,
+  `project_id` int(10) unsigned NOT NULL,
+  `relationship` enum('admin','member','follower','await-member') DEFAULT NULL,
+  `joined` bigint(12) DEFAULT NULL
+) ENGINE=InnoDB
+
+***CREATE TABLE `projects` (
+  `projectname` varchar(64) DEFAULT NULL,
+  `project_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `url` varchar(64) DEFAULT NULL,
+  `subtitle` varchar(256) DEFAULT NULL,
+  `visibility` enum('all','logged','members') DEFAULT NULL,
+  `description` text,
+  `created` bigint(12) DEFAULT NULL,
+  PRIMARY KEY (`project_id`)
+) ENGINE=InnoDB
+
+CREATE TABLE `subscription` (
+  `subscriber_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `email` varchar(320) DEFAULT NULL,
+  `verified` tinyint(1) DEFAULT '0',
+  `verify_code` char(32) DEFAULT NULL,
+  `delete_code` char(32) DEFAULT NULL,
+  `timestamp` bigint(12) DEFAULT NULL,
+  PRIMARY KEY (`subscriber_id`)
+) ENGINE=InnoDB
+
+***CREATE TABLE `tags` (
+  `tagname` varchar(128) DEFAULT NULL,
+  `tag_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `description` varchar(1024) DEFAULT NULL,
+  `type` enum('suggested','active') DEFAULT NULL,
+  `created` bigint(12) DEFAULT NULL,
+  PRIMARY KEY (`tag_id`)
+) ENGINE=InnoDB
+
+***CREATE TABLE `user_accounts` (
+  `user_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `username` varchar(64) DEFAULT NULL,
+  `password` char(64) DEFAULT NULL,
+  `salt` char(64) DEFAULT NULL,
+  `iterations` int(10) unsigned DEFAULT NULL,
+  `email` varchar(320) DEFAULT NULL,
+  `verified` tinyint(1) DEFAULT '0',
+  `verify_code` char(32) DEFAULT NULL,
+  `code_created` bigint(12) DEFAULT NULL,
+  `delete_code` char(32) DEFAULT NULL,
+  `account_created` bigint(12) DEFAULT NULL,
+  PRIMARY KEY (`user_id`)
+) ENGINE=InnoDB
+
+***CREATE TABLE `user_info` (
+  `user_id` int(10) unsigned NOT NULL,
+  `v_about` tinyint(1) DEFAULT '1',
+  `about` text,
+  `v_age` tinyint(1) DEFAULT '1',
+  `birthday` date DEFAULT NULL,
+  `v_location` tinyint(1) DEFAULT '1',
+  `location` varchar(200) DEFAULT NULL
+) ENGINE=InnoDB
+
+***CREATE TABLE `user_webpage` (
+  `user_id` int(10) unsigned NOT NULL,
+  `v_url` tinyint(1) DEFAULT '1',
+  `url` varchar(200) DEFAULT NULL
+) ENGINE=InnoDB

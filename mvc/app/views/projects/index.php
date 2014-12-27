@@ -8,7 +8,10 @@ $page->title('projects');
 
 $content='
     <div>
-        general projects page (new projects and ideas, project map, successful projects etc. (project main page, rozcestnik))
+        general projects page (new projects and ideas, project map, successful projects etc. (project main page, rozcestnik)).
+    </div>
+    <div>
+        now, you can look at project <a href="/project/example">example</a>
     </div>
 ';
 

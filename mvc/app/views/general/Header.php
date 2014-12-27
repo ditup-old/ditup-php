@@ -47,6 +47,7 @@ class Header
                 <li>my projects</li>
                 <li>...</li>
                 <li><a href="/logout/">logout</a></li>
+                <li><a href="/logout-all/">logout everywhere</a></li>
             </ul>
         </li>        
         ':
