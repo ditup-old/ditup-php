@@ -37,7 +37,7 @@ class Controller
         $this->username = $_SESSION['username'];
         $this->from_form = $_SESSION['from_form'];
     }
-
+    
     protected function model($model)
     {
         require_once '../app/models/' . $model . '.php';

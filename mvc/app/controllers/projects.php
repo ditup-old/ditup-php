@@ -11,8 +11,17 @@ use \Exception;
 **/
 
 class Projects extends Controller
-{
-    public function index($action='')
+{   
+    public static function route($url){
+        $self = new self;
+        if(isset($url[0])){
+            $self->$url[0]();
+        }
+        else{
+            $self->index();
+        }
+    }
+    public function index()
     {
         $this->view('projects/index', ['loggedin' => $this->loggedin, 'user-me' => $this->username]);
     }

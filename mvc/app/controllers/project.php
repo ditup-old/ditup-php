@@ -11,6 +11,10 @@ use Mrkvon\Ditup\Core\Controller as Controller;
 
 class Project extends Controller
 {
+    public static function route($url){
+        $self = new self;
+        $self->index(isset($url[0]) ? $url[0] : '', isset($url[1]) ? $url[1] : '');
+    }
     public function index($url = '', $action = '')
     {
         $project = $this->model('Project');

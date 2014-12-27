@@ -5,6 +5,11 @@ use Mrkvon\Ditup\Core\Controller as Controller;
 
 class User extends Controller
 {
+    public static function route($url){
+        $self = new self;
+        $self->index(isset($url[0]) ? $url[0] : '', isset($url[1]) ? $url[1] : '');
+    }
+
     public function index($name = '', $action='')
     {
         $user = $this->model('User');

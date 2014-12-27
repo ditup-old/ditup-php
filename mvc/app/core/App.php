@@ -6,18 +6,21 @@ use Mrkvon\Ditup\Controller as Controller;
 class App
 {
     
-    protected $controller = 'home';
+    //protected $controller = 'home';
 
-    protected $method = 'index';
+    //protected $method = 'index';
 
-    protected $params = [];
+    //protected $params = [];
 
     public function __construct()
     {
-        //print_r($_SERVER);
         $url = $this->parseUrl();
+        
+        require_once '../app/core/router.php';
 
-        if(file_exists('../app/controllers/' . $url[0] . '.php'))
+        route($url);
+
+/*        if(file_exists('../app/controllers/' . $url[0] . '.php'))
         {
             $this->controller = $url[0];
             unset($url[0]);
@@ -44,12 +47,14 @@ class App
         //print_r($this->params);
     
         call_user_func_array([$this->controller, $this->method],$this->params);
+        */
     }
 
     public function parseUrl()
     {
         if(isset($_SERVER['REQUEST_URI'])) {
-            return explode('/',filter_var(trim($_SERVER['REQUEST_URI'], '/'), FILTER_SANITIZE_URL));
+            $url = filter_var(trim($_SERVER['REQUEST_URI'], '/'), FILTER_SANITIZE_URL);
+            return strlen($url) !== 0 ? explode('/',$url) : [];
         }
     }
 }

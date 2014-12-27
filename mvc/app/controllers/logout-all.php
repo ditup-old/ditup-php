@@ -5,6 +5,11 @@ use Mrkvon\Ditup\Core\Controller as Controller;
 
 class LogoutAll extends Controller
 {   
+    public static function route($url){
+        $self = new self;
+        $self->index();
+    }
+
     public function index()
     {
         if($this->loggedin){
