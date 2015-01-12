@@ -21,6 +21,7 @@ class ProjectPage extends PageWithHeader {
     ****/
 
     private $projectname = 'foo';
+    private $url = 'foo';
     private $title2 = '';
     private $is_member = false;
     private $is_admin = false;
@@ -34,8 +35,9 @@ class ProjectPage extends PageWithHeader {
         $this -> is_admin = $is_admin;
     }
 
-    public function setProjectname($projectname){
+    public function setProjectname($projectname, $url){
         $this->projectname = $projectname;
+        $this->url = $url;
     }
 
     public function setSubtitle($subtitle){
@@ -69,7 +71,7 @@ class ProjectPage extends PageWithHeader {
                     (!$this->is_member && $this->loggedin)
                     ?
                     '
-                <li><a href="/project/'. $this->projectname .'/join">join</a></li>'
+                <li><a href="/project/'. $this->url .'/join">join</a></li>'
                     :
                     ''
                 )
@@ -77,7 +79,7 @@ class ProjectPage extends PageWithHeader {
                     (!$this->is_member && $this->loggedin)
                     ?
                     '
-                <li><a href="/project/'. $this->projectname .'/follow">follow</a></li>'
+                <li><a href="/project/'. $this->url .'/follow">follow</a></li>'
                     :
                     ''
                 ).
@@ -89,7 +91,7 @@ class ProjectPage extends PageWithHeader {
                     ($this->loggedin && $this->is_admin)
                     ?
                     '
-                <li><a href="/project/'. $this->projectname .'/edit">edit project</a></li>'
+                <li><a href="/project/'. $this->url .'/edit">edit project</a></li>'
                     :
                     ''
                 )
@@ -99,10 +101,10 @@ class ProjectPage extends PageWithHeader {
         <nav class="side-menu">
             <!--(side) info menu-->
             <ul>
-                <li><a href="/project/' . $this->projectname . '">general summary (landing page)</a></li>
-                <li><a href="/project/' . $this->projectname . '/info">detailed information</a></li>
-                <li><a href="/project/' . $this->projectname . '/people">people involved</a></li>
-                <li><a href="/project/' . $this->projectname . '/location">location</a></li>
+                <li><a href="/project/' . $this->url . '">general summary (landing page)</a></li>
+                <li><a href="/project/' . $this->url . '/info">detailed information</a></li>
+                <li><a href="/project/' . $this->url . '/people">people involved</a></li>
+                <li><a href="/project/' . $this->url . '/location">location</a></li>
             </ul>
         </nav>
         <div class="project-content">';

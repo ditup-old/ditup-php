@@ -9,17 +9,20 @@ function route(Array $url){
     ****/
 
     $controllers=[
+        'change-password' => 'ChangePassword',
+        'community' => 'community',
         'home' => 'home',
-        'start' => 'start',
-        'people' => 'people',
-        'user' => 'user',
-        'projects' => 'projects',
-        'project' => 'project',
         'login' => 'login',
         'logout' => 'logout',
+        'logout-all' => 'LogoutAll',
+        'message' => 'Message',
+        'messages' => 'Messages',
+        'people' => 'people',
+        'project' => 'project',
+        'projects' => 'projects',
+        'start' => 'start',
         'signup' => 'signup',
-        'change-password' => 'ChangePassword',
-        'community' => 'community'
+        'user' => 'user'
 
 
     ];

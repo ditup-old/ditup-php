@@ -9,13 +9,62 @@ use Exception;
 require_once dirname(__FILE__).'/db-login.php';
 
 class Tags{
+    
+    /*****
+    
+    public static function searchTags($string) test!
+    public static function selectTagsByUsername($username) written. test!
+    public static function insertTag($values)  test!
+    public static function deleteTag($tagname) test!
+    public static function insertUserTag($values) test!
+    public static function deleteUserTag($values) test!
+    public static function insertProjectTag($values) test!
+    public static function deleteProjectTag($values) test!
+    public static function selectTagsByProjectUrl($url) test!
+    ******/
 
     public static function searchTags($string){
         /*for a given string this will return tagnames which contain this string
           i.e. "alternative education, education, alter, alternative-education, tive edu" will find "alternative-education" tag
+        //select * from tags where tagname regexp '.*est .*';
+        .*preg_quote($string).*
         */
-    }
+        $pdo = new PDO('mysql:host='.Login\HOSTNAME.';dbname='. Login\DATABASE .';charset=utf8', Login\USERNAME, Login\PASSWORD);
+    
+    //****************without these lines it will not catch error and not transaction well. not rollback.********
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+        // Start the transaction. PDO turns autocommit mode off depending on the driver, you don't need to implicitly say you want it off
+        $pdo->beginTransaction();
+        // 
+        try
+        {
+            // Prepare the statements
+            $regexp='.*' . preg_quote($string) . '.*';
+            $statement=$pdo->prepare('SELECT * FROM tags WHERE tagname REGEXP :re');
+            $statement->bindValue(':re',strval($regexp), PDO::PARAM_STR);
+            $statement->execute();
+            
+            $rows = $statement->fetchAll(PDO::FETCH_ASSOC);
+  // 
+            $pdo->commit();
 
+            $data = $rows;
+            unset ($pdo);
+            return $data;
+
+        }
+        catch(PDOException $e)
+        {
+            $pdo->rollBack();
+      
+            $outcome=htmlentities(print_r($e,true));
+            echo $outcome;
+            // Report errors
+        }
+        unset($pdo);
+    }
+    
     public static function selectTagsByUsername($username){
         $pdo = new PDO('mysql:host='.Login\HOSTNAME.';dbname='. Login\DATABASE .';charset=utf8', Login\USERNAME, Login\PASSWORD);
     
@@ -56,7 +105,7 @@ class Tags{
     }
     
     public static function insertTag($values){
-        /** create new tag
+         /** create new tag
          *  $values=[tagname, description, type: (suggested, active)];
          *  tagname must be unique!!!
          */
@@ -74,7 +123,7 @@ class Tags{
         try
         {
             // Prepare the statements
-            $statement=$pdo->prepare('INSERT IF tagname UNIQUE INTO tags (tagname, description, type, created) VALUES (:tn, :ds, :ty, UNIX_TIMESTAMP())');
+            $statement=$pdo->prepare('INSERT INTO tags (tagname, description, type, created) VALUES (:tn, :ds, :ty, UNIX_TIMESTAMP())');
             $statement->bindValue(':tn', strval($values['tagname']), PDO::PARAM_STR);
             $statement->bindValue(':ds', strval($values['description']), PDO::PARAM_STR);
             $statement->bindValue(':ty', strval($values['type']), PDO::PARAM_STR);
@@ -97,9 +146,10 @@ class Tags{
         {
             $pdo->rollBack();
       
-            $outcome=htmlentities(print_r($e,true));
-            echo $outcome;
+            //$outcome=htmlentities(print_r($e,true));
+            //echo $outcome;
             // Report errors
+            return false;
         }
         unset($pdo);
     }
@@ -109,7 +159,47 @@ class Tags{
          * delete tag by tagname
          * use with care! all the user_tag and project_tag connections must be deleted before.
          */
-        return 'implement!';
+        
+        $pdo = new PDO('mysql:host='.Login\HOSTNAME.';dbname='. Login\DATABASE .';charset=utf8', Login\USERNAME, Login\PASSWORD);
+    
+    //****************without these lines it will not catch error and not transaction well. not rollback.********
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+        // Start the transaction. PDO turns autocommit mode off depending on the driver, you don't need to implicitly say you want it off
+        $pdo->beginTransaction();
+        // 
+        try
+        {
+            // Prepare the statements
+            $statement=$pdo->prepare('DELETE tags, project_tag, user_tag FROM
+                (project_tag RIGHT JOIN tags ON tags.tag_id=project_tag.tag_id)
+                LEFT JOIN user_tag ON tags.tag_id=user_tag.tag_id
+                    WHERE tags.tagname=:tn');
+            $statement->bindValue(':tn', strval($tagname), PDO::PARAM_STR);
+            $statement->execute();
+            
+            $count = $pdo->rowCount();
+  // 
+            $pdo->commit();
+
+            unset ($pdo);
+            
+            if($count>=1){
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+        catch(PDOException $e)
+        {
+            $pdo->rollBack();
+      
+            $outcome=htmlentities(print_r($e,true));
+            echo $outcome;
+            // Report errors
+        }
+        unset($pdo);
     }
     
     public static function insertUserTag($values){
@@ -117,7 +207,44 @@ class Tags{
          *  $values=[username: username, tagname: tagname];
          *
          */
-        return 'implement!';
+        $pdo = new PDO('mysql:host='.Login\HOSTNAME.';dbname='. Login\DATABASE .';charset=utf8', Login\USERNAME, Login\PASSWORD);
+    
+    //****************without these lines it will not catch error and not transaction well. not rollback.********
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+        // Start the transaction. PDO turns autocommit mode off depending on the driver, you don't need to implicitly say you want it off
+        $pdo->beginTransaction();
+        // 
+        try
+        {
+            // Prepare the statements
+
+
+	    $statement=$pdo->prepare('INSERT INTO user_tag (user_id, tag_id) SELECT ua.user_id, tg.tag_id FROM user_accounts AS ua, tags AS tg WHERE ua.username=:un AND tg.tagname=:tn');
+	    $statement->bindValue(':un', strval($values['username']), PDO::PARAM_STR);
+	    $statement->bindValue(':tn', strval($values['tagname']), PDO::PARAM_STR);
+            $statement->execute();
+
+	    $count = $pdo->rowCount();
+
+            $pdo->commit();
+
+	    if($count>0){
+		return true;
+	    }
+	    else{
+		return false;
+	    }
+        }
+        catch(PDOException $e)
+        {
+            $pdo->rollBack();
+      
+            $outcome=htmlentities(print_r($e,true));
+            echo $outcome;
+            // Report errors
+        }
+        unset($pdo);
     }
     
     public static function deleteUserTag($values){
@@ -126,7 +253,48 @@ class Tags{
          * $values=[username, tagname]
          *
          */
-        return 'implement!';
+        $pdo = new PDO('mysql:host='.Login\HOSTNAME.';dbname='. Login\DATABASE .';charset=utf8', Login\USERNAME, Login\PASSWORD);
+    
+    //****************without these lines it will not catch error and not transaction well. not rollback.********
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+        // Start the transaction. PDO turns autocommit mode off depending on the driver, you don't need to implicitly say you want it off
+        $pdo->beginTransaction();
+        // 
+        try
+        {
+            // Prepare the statements
+
+
+	    $statement=$pdo->prepare('DELETE FROM user_tag
+		WHERE user_id IN 
+		    (SELECT user_id FROM user_accounts WHERE username=:un)
+		AND tag_id IN
+		    (SELECT tag_id FROM tags WHERE tagname=:tn)');
+	    $statement->bindValue(':un', strval($values['username']), PDO::PARAM_STR);
+	    $statement->bindValue(':tn', strval($values['tagname']), PDO::PARAM_STR);
+            $statement->execute();
+
+	    $count = $pdo->rowCount();
+
+            $pdo->commit();
+
+	    if($count>0){
+		return true;
+	    }
+	    else{
+		return false;
+	    }
+        }
+        catch(PDOException $e)
+        {
+            $pdo->rollBack();
+      
+            $outcome=htmlentities(print_r($e,true));
+            echo $outcome;
+            // Report errors
+        }
+        unset($pdo);
     }
 
     public static function insertProjectTag($values){
@@ -134,7 +302,44 @@ class Tags{
          *  $values=[url: project url, tagname: tagname];
          *
          */
-        return 'implement!';
+        $pdo = new PDO('mysql:host='.Login\HOSTNAME.';dbname='. Login\DATABASE .';charset=utf8', Login\USERNAME, Login\PASSWORD);
+    
+    //****************without these lines it will not catch error and not transaction well. not rollback.********
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+        // Start the transaction. PDO turns autocommit mode off depending on the driver, you don't need to implicitly say you want it off
+        $pdo->beginTransaction();
+        // 
+        try
+        {
+            // Prepare the statements
+
+
+	    $statement=$pdo->prepare('INSERT INTO project_tag (project_id, tag_id) SELECT pr.project_id, tg.tag_id FROM projects AS pr, tags AS tg WHERE pr.url=:url AND tg.tagname=:tn');
+	    $statement->bindValue(':url', strval($values['url']), PDO::PARAM_STR);
+	    $statement->bindValue(':tn', strval($values['tagname']), PDO::PARAM_STR);
+            $statement->execute();
+
+	    $count = $pdo->rowCount();
+
+            $pdo->commit();
+
+	    if($count>0){
+		return true;
+	    }
+	    else{
+		return false;
+	    }
+        }
+        catch(PDOException $e)
+        {
+            $pdo->rollBack();
+      
+            $outcome=htmlentities(print_r($e,true));
+            echo $outcome;
+            // Report errors
+        }
+        unset($pdo);
     }
     
     public static function deleteProjectTag($values){

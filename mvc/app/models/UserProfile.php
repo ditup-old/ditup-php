@@ -7,6 +7,7 @@ use Exception;
 
 require_once dirname(__FILE__).'/database/UserInfo.php';
 require_once dirname(__FILE__).'/database/Tags.php';
+require_once dirname(__FILE__).'/database/ProjectUser.php';
 require_once dirname(__FILE__).'/User.php';
 
 class UserProfile extends User
@@ -58,7 +59,7 @@ class UserProfile extends User
     }
     
     public function setProfile($data){
-        print_r($data);
+        //print_r($data);
         $updated=Database\UserInfo::updateProfile($data);
         if(!$updated) throw new Exception('updating error');
     }
@@ -68,9 +69,28 @@ class UserProfile extends User
         return $tags;
     }
 
+    public static function addTag($tagname, $username){
+        /***bool addTag(string $tagname, string $username)
+            add tag (tagname) to user (username)
+            return true on success and false on fail
+        **/    
+    }
+    
+    public static function removeTag($tagname, $username){
+        /***bool removeTag(string $tagname, string $username)
+            remove tag $tagname from user $username
+            return true on success and false on fail
+        ***/ 
+    }
+
     public function validate($data, &$errors){
         $ret = true;
 
         return $ret;
+    }
+
+    public static function getProjects($username){
+        $projects = Database\ProjectUser::selectProjectsByUsername($username);
+        return $projects;
     }
 }

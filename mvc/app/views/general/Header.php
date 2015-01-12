@@ -43,7 +43,7 @@ class Header
         <li>me
             <ul>
                 <li><a href="/user/' . $this->user . '">my profile</a></li>
-                <li>messages</li>
+                <li><a href="/messages" >messages</a></li>
                 <li>my projects</li>
                 <li>...</li>
                 <li><a href="/logout/">logout</a></li>

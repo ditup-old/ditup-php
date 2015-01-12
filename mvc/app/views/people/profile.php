@@ -1,58 +1,15 @@
 <?php
 
-require_once '../app/views/general/PageWithHeader.php';
+use Mrkvon\Ditup\View\User\UserPage as UserPage;
 
+require_once '../app/views/people/UserPage.php';
 
-$page=new PageWithHeader($data['loggedin'], $data['user']);
-$page->title('profile::'.$data['member']);
-$profile_is_me = $data['user'] === $data['member'] && $data['loggedin'];
+$up=new UserPage($data['loggedin'], $data['user-me']);
+$up->setUsername($data['member']);
+$up->setMe($data['user-me']===$data['member'] && $data['loggedin']);
+$up->title('main');
+
 $content = '
-    <div>
-        <!--each of these menu things will be optional-->
-        <div class="profile-header" >
-            <img class="header-avatar" src="" /><h1 class="header-user-name">'. $data['member'] . '</h1>
-            <ul class="header-action-menu">'.
-            (
-            $profile_is_me ? 
-            ''
-            :
-            '
-                <li>message</li>'
-            ).
-            (
-            $profile_is_me ? 
-            ''
-            :
-            '
-                <li>create connection (friends etc.)</li>'
-            ).
-            '
-                <li>follow</li>
-                <li>reference, comment</li>
-                <li>chat</li>'.
-            (
-            $profile_is_me ? 
-            '
-                <li><a href="/user/'.$data['user'].'/edit">edit profile</a></li>'
-            :
-            ''
-            ).
-            '
-            </ul>
-        </div>
-        <nav class="side-menu">
-            <!--(side) info menu-->
-            <ul>
-                <li><a href="/user/' . $data['member'] . '">general summary (landing page)</a></li>
-                <li><a href="/user/' . $data['member'] . '/info">personal info</a></li>
-                <li><a href="/user/' . $data['member'] . '/projects">projects</a></li>
-                <li><a href="/user/' . $data['member'] . '/interests">interests, what she wants to do</a></li>
-                <li><a href="/user/' . $data['member'] . '/activity">recent activity</a></li>
-                <li><a href="/user/' . $data['member'] . '/connections">connections (friends)</a></li>
-                <li><a href="/user/' . $data['member'] . '/references">references (' . '0' . ')</a></li>
-            </ul>
-        </nav>
-        <div class="user-profile-content">
             <table>
                 <tbody>
                     <tr><th>bio</th><td>username</td><td>' . $data['member'] . '</td></tr>'
@@ -102,13 +59,9 @@ $content = '
                 </tbody>
             </table>'
             .print_r($data,true).'
-        </div>
-    </div>
 ';
 
-$page->css('/css/profile.css');
+$up->add($content);
 
-$page->add($content);
-
-echo $page->generate();
+echo $up->generate();
 

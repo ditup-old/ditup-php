@@ -5,7 +5,7 @@ use Mrkvon\Ditup\View\Project\ProjectPage as ProjectPage;
 
 $action=$data['action'];
 $page=new ProjectPage($data['loggedin'], $data['user-me']);
-$page->setProjectname($data['projectname']);
+$page->setProjectname($data['projectname'], $data['url']);
 $page->setMember($data['is_member']);
 $page->setAdmin($data['is_admin']);
 $page->setSubtitle($data['subtitle']);
