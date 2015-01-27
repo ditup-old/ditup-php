@@ -1,0 +1,9 @@
+search is working
+  search by tags
+  search projects by tags
+  search projects by interests
+  search users by name, username
+  search users by place
+  search users by interest
+  
+  users should by unsearchable.

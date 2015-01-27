@@ -123,7 +123,11 @@ class User extends Controller
 
     private function edit($username_me, $username_member, $user_profile, $loggedin){
         if($username_me === $username_member && $loggedin){
-            if(!empty($_POST)){
+            //print_r($_POST);
+            //echo (isset($_POST)?'post true':'post false');
+            //echo (isset($_FILES)?'file true':'file false');
+            print_r($_FILES);
+            if(!empty($_POST) && isset($_POST['submit'])&&$_POST['submit']=='update profile'){
                 /*here data should be entered to database.
                 what data?
                 
@@ -142,6 +146,7 @@ class User extends Controller
                     $user_profile->setProfile($data);
                     
                     header('Location:/user/'.$this->username);
+                    exit();
                 }
                 else{
                     $this->view('people/profile-edit', [
@@ -152,6 +157,36 @@ class User extends Controller
                         'errors' => $errors
                     ]);
                 }
+            }
+            elseif(!empty($_FILES)){
+                if(isset($_FILES['profile-picture'])){
+                    $file=$_FILES['profile-picture'];
+                }
+                else exit('you have to enter file to upload (go to <a href=".">form</a>)');
+
+                echo '<br />';
+
+                if($file['error']===0){
+                    //echo '<br />$file[type]='.$file['type'].'<br />';
+                    if($file['type']==='image/png' || $file['type']==='image/jpeg'){
+                        //print_r(getcwd());
+                        $filetype='';
+                        if($file['type']==='image/png') $filetype='png';
+                        elseif($file['type']==='image/jpeg') $filetype='jpg';
+                        $filename=$username_me.'.'.$filetype;
+                        if(move_uploaded_file($file['tmp_name'], 'img/profile/'.$filename)){
+                            if(file_exists('img/profile/'.$username_me.'.jpg')&&$filename!==$username_me.'.jpg') unlink('img/profile/'.$username_me.'.jpg');
+                            if(file_exists('img/profile/'.$username_me.'.png')&&$filename!==$username_me.'.png') unlink('img/profile/'.$username_me.'.png');
+                            header('Location:/user/'.$username_me);
+                            exit();
+                        }
+                        else exit('failed to upload file.');
+                    }
+                    else exit('only png, jpg allowed');
+                }
+                else exit('error uploading file');
+
+                exit();
             }
             else{
                 $this->view('people/profile-edit', ['loggedin' => $loggedin, 'user' => $username_me, 'member' => $username_member, 'profile' => $user_profile->getProfile($username_member)]);

@@ -26,16 +26,29 @@ $data['values'] = isset($data['values'])?$data['values']:['projectname' => '', '
 $data['errors'] = isset($data['errors'])?$data['errors']:[];
 
 $content='
-<h2>create new project</h2>
+<h2>create new dit</h2>
 <form action="" method="post" >
 <table>
     <tr>
-        <td>project name</td>
+        <td>dit name</td>
         <td><input type="text" name="projectname" value="' . $data['values']['projectname'] . '" /></td>
         <td>'.generate_errors('projectname', $data['errors']).'</td>
     </tr>
     <tr>
-        <td>project url</td>
+        <td>dit type</td>
+        <td>
+            <select name="type">
+                <option value="idea">idea</option>
+                <option value="project">project</option>
+                <option value="interest">interest</option>
+                <option value="topic">topic</option>
+                <option value="issue">issue</option>
+            </select>
+        </td>
+        <td>'.generate_errors('type', $data['errors']).'</td>
+    </tr>
+    <tr>
+        <td>dit url</td>
         <td><input type="text" name="url" value="' . $data['values']['url'] . '" /></td>
         <td>'.generate_errors('url', $data['errors']).'</td>
     </tr>

@@ -35,11 +35,27 @@ class Message extends Controller
             $messages_class=$this->staticModel('Messages');
             $message=$messages_class::readMessage($username, $timestamp, $this->username);
             if(is_array($message) && sizeof($message)){
-                $this->view('messages/show-message',[
-                    'loggedin' => $this->loggedin,
-                    'user-me' => $this->username,
-                    'message' => $message
-                ]);
+                if($message['send-time']!=null){
+                    $this->view('messages/show-message',[
+                        'loggedin' => $this->loggedin,
+                        'user-me' => $this->username,
+                        'message' => $message
+                    ]);
+                }
+                elseif($message['from-user']['username']==$this->username){
+                    $this->view('messages/compose',[
+                        'loggedin' => $this->loggedin,
+                        'user-me' => $this->username,
+                        'message' => $message
+                    ]);
+                }
+                else{
+                    $this->view('general/error',[
+                        'loggedin' => $this->loggedin,
+                        'user-me' => $this->username,
+                        'message' => 'This error shouldn\'t happen.'
+                    ]);
+                }
             }
             else{
                 $this->view('general/error',[

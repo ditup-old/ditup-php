@@ -7,7 +7,6 @@ class Messages extends Controller
 {
     public static function route($url=[]){
         $self = new self();
-        //print_r($_SESSION);
         if(!isset($url[0])){
             //show main message page
             $self->messages();
@@ -38,12 +37,31 @@ class Messages extends Controller
     }
     
     private function messages(){
-        echo 'messages';
+    /*prepare main message page***/
+        $this->view('general/message', [
+            'loggedin' => $this->loggedin,
+            'user-me' => $this->username,
+            'message' => '
+            <h1>Messages</h1>
+            <ul>
+                <li><a href="/messages/received">received messages</a></li>
+                <li><a href="/messages/sent">sent messages</a></li>
+                <li><a href="/messages/drafts">drafts</a></li>
+                <li><a href="/messages/compose">write new message</a></li>
+            </ul>'
+        ]);
     }
 
     private function composeMessage(){
+    /**
+     * compose message.
+     */ 
+        
+        //if user is logged in
         if($this->loggedin){
-            if(isset($_POST, $_POST['from-project'], $_POST['to-users'], $_POST['to-projects'], $_POST['subject'], $_POST['message'], $_POST['submit'])){
+            //if the form is filled with data
+            if(isset($_POST, $_POST['from-project'], $_POST['to-users'], $_POST['to-projects'], $_POST['subject'], $_POST['message'], $_POST['create-time'], $_POST['submit'])){
+                //create model object
                 $messages=$this->staticModel('Messages');
                 $errors=[];
                 $values=[
@@ -53,15 +71,35 @@ class Messages extends Controller
                     'to-users' => explode(', ', $_POST['to-users']),
                     'to-projects' => explode(', ', $_POST['to-projects']),
                     'subject' => $_POST['subject'],
-                    'message' => $_POST['message']
+                    'message' => $_POST['message'],
+                    'create-time' => $_POST['create-time']
                 ];
-                //if message cancelled, redirect to /messages
-                if($_POST['submit']==='cancel'){
+                //if message cancelled,
+                    //if it was new, redirect to /messages
+                    //if it was draft, delete the draft and redirect to /messages/drafts
+                if($_POST['submit']=='cancel'){
+                    if($values['create-time']!==''){
+                        if($messages::deleteMessage($values['from-user'], $values['create-time'])){
+                            header('Location:/messages/drafts');
+                            exit();
+                        }
+                        else{;
+                            $this->view('general/error', [
+                                'loggedin' => $this->loggedin,
+                                'user-me' => $this->username,
+                                'message' => 'we didn\'t manage to delete the draft due to some bugs or wrong data'
+                            ]);
+                            exit();
+                        }
+                    }
                     header('Location:/messages');
+                    exit();
                 }
                 //if values are valid, send message or save it to drafts
                 elseif($messages::validate($values, $errors)){
                     //if clicked send button, send.
+                    //if new message, send new message ... insert.
+                    //if draft, send the draft... update.
                     if($_POST['submit']==='send'){
                         $success=$messages::sendMessage($values);
                         if($success){
@@ -79,6 +117,9 @@ class Messages extends Controller
                             ]);
                         }
                     }
+                    //save to drafts:
+                    //if new message, insert without sending time
+                    //if draft, update without sending time
                     elseif($_POST['submit']==='save to drafts'){
                         $success=$messages::saveDraftMessage($values);
 
@@ -86,7 +127,7 @@ class Messages extends Controller
                             $this->view('general/message', [
                                 'loggedin' => $this->loggedin,
                                 'user-me' => $this->username,
-                                'message' => '<a href="/message/'.$success['username'].'/'.$success['timestamp'].'" >message</a> was saved to drafts'
+                                'message' => '<a href="/message/'.$success['username'].'/'.$success['timestamp'].'" >message</a> was saved to <a href="/messages/drafts">drafts</a>'
                             ]);
                         }
                         else{
@@ -124,7 +165,23 @@ class Messages extends Controller
     }
 
     private function sentMessages(){
-        echo 'sent messages';
+        if($this->loggedin){
+            $message_model = $this->staticModel('Messages');
+            $messages = $message_model::getSentMessages($this->username);
+
+            $this->view('messages/show-sent', [
+                'loggedin' => $this->loggedin,
+                'user-me' => $this->username,
+                'messages' => $messages
+            ]);
+        }
+        else{
+            $this->view('general/error', [
+                'loggedin' => $this->loggedin,
+                'user-me' => $this->username,
+                'message' => 'you need to <a href="/login">log in</a> to be able to view messages'
+            ]);
+        }
     }
 
     private function receivedMessages(){
@@ -148,6 +205,22 @@ class Messages extends Controller
     }
 
     private function draftMessages(){
-        echo 'message drafts';
+        if($this->loggedin){
+            $message_model = $this->staticModel('Messages');
+            $messages = $message_model::getDraftMessages($this->username);
+
+            $this->view('messages/show-drafts', [
+                'loggedin' => $this->loggedin,
+                'user-me' => $this->username,
+                'messages' => $messages
+            ]);
+        }
+        else{
+            $this->view('general/error', [
+                'loggedin' => $this->loggedin,
+                'user-me' => $this->username,
+                'message' => 'you need to <a href="/login">log in</a> to be able to view messages'
+            ]);
+        }
     }
 }

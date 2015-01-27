@@ -1,0 +1,7 @@
+message read/unread
+  we have to create read/unread/delete table.
+  if delete message, message will be deleted to read/unread/delete table.
+  drafts will be deleted immediately.
+
+
+change username/create_time to message_id

@@ -4,6 +4,7 @@ require_once '../app/views/general/PageWithHeader.php';
 use \PageWithHeader as Page;
 
 $page = new Page($data['loggedin'], $data['user-me']);
+print_r($data);
 
 $content = '
 <form method = "post" action="" >

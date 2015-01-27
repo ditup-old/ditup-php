@@ -25,11 +25,12 @@ class Projects extends DbAccess
             try
             {
                 // Prepare the statements
-                $statement=$pdo->prepare('INSERT INTO projects (projectname, url, subtitle, description) VALUES (:pn, :ur, :st, :de)');
+                $statement=$pdo->prepare('INSERT INTO projects (projectname, url, subtitle, description, created, type) VALUES (:pn, :ur, :st, :de, UNIX_TIMESTAMP(), :type)');
                 $statement->bindValue(':pn' ,strval($values['projectname']), PDO::PARAM_STR);
                 $statement->bindValue(':ur' ,strval($values['url']), PDO::PARAM_STR);
                 $statement->bindValue(':st' ,strval($values['subtitle']), PDO::PARAM_STR);
                 $statement->bindValue(':de' ,strval($values['description']), PDO::PARAM_STR);
+                $statement->bindValue(':type' ,strval($values['type']), PDO::PARAM_STR);
                 $statement->execute();
                 $project_id = $pdo->lastInsertId();
                 unset($statement);
@@ -148,29 +149,17 @@ class Projects extends DbAccess
         try
         {
             // Prepare the statements
-            $statement = $pdo->prepare('SELECT project_id FROM projects WHERE url=:url');
-            $statement->bindValue(':url',strval($url), PDO::PARAM_STR);
-            $statement->execute();
-                
-            $rows = $statement->fetchAll(PDO::FETCH_ASSOC);
-            $project_id = isset($rows[0], $rows[0]['project_id'])?$rows[0]['project_id']:false;
             
-            $statement = $pdo->prepare('SELECT user_id FROM user_accounts WHERE username=:un');
+            $statement = $pdo->prepare('SELECT relationship FROM project_user
+                WHERE project_id IN
+                    (SELECT project_id FROM projects WHERE url=:url)
+                AND user_id IN
+                    (SELECT user_id FROM user_accounts WHERE username=:un)'
+            );
+            $statement->bindValue(':url',strval($url), PDO::PARAM_STR);
             $statement->bindValue(':un',strval($username), PDO::PARAM_STR);
             $statement->execute();
-                
             $rows = $statement->fetchAll(PDO::FETCH_ASSOC);
-            $user_id = isset($rows[0], $rows[0]['user_id'])?$rows[0]['user_id']:false;
-            unset($rows);
-
-            if($project_id!==false && $user_id!==false){
-                $statement = $pdo->prepare('SELECT relationship FROM project_user WHERE (project_id=:pid AND user_id=:uid)');
-                $statement->bindValue(':pid',strval($project_id), PDO::PARAM_STR);
-                $statement->bindValue(':uid',strval($user_id), PDO::PARAM_STR);
-                $statement->execute();
-                $rows = $statement->fetchAll(PDO::FETCH_ASSOC);
-            }
-            else{$rows = [];}
             $pdo->commit();
         }
         catch(PDOException $e)

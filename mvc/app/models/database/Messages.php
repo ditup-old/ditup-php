@@ -273,6 +273,94 @@ class Messages{
         }
     }
     
+    public static function updateMessageById($message_id, $values, $flag='DRAFT'){
+        //flags: SEND: send message
+        //       DRAFT: update and save draft
+        $pdo=self::newPDO();
+        $pdo->beginTransaction();
+        // 
+        try
+        {
+            // Prepare the statements
+
+            //1. update the message itself
+            //2. delete all old to_project, to_user
+            //3. insert new to_project, to_user
+            $flag = $values['sent'] == true? 'SEND' : 'DRAFT';
+
+            $statement=$pdo->prepare('UPDATE messages msg SET
+                msg.from_user_id=(SELECT ua.user_id FROM user_accounts ua WHERE username=:un),
+                msg.from_project_id=(SELECT pr.project_id FROM projects pr WHERE url=:url),
+                msg.subject=:sub,
+                msg.message=:msg,
+                msg.send_time='.($flag=='SEND'?'UNIX_TIMESTAMP()':'NULL').'
+                WHERE msg.message_id=:mid AND msg.send_time IS NULL
+            ');
+            $statement->bindValue(':un',strval($values['from_user']), PDO::PARAM_STR);
+            $statement->bindValue(':url',strval($values['from_project']), PDO::PARAM_STR);
+            $statement->bindValue(':sub',strval($values['subject']), PDO::PARAM_STR);
+            $statement->bindValue(':msg',strval($values['message']), PDO::PARAM_STR);
+            $statement->bindValue(':mid',strval($message_id), PDO::PARAM_STR);
+            $statement->execute();
+            
+            $statement=$pdo->prepare('DELETE FROM message_to_user WHERE message_id=:mid');
+            $statement->bindValue(':mid',strval($message_id), PDO::PARAM_STR);
+            $statement->execute();
+
+            $statement=$pdo->prepare('DELETE FROM message_to_project WHERE message_id=:mid');
+            $statement->bindValue(':mid',strval($message_id), PDO::PARAM_STR);
+            $statement->execute();
+
+            //insert receivers - users to table 'message_to_user'
+            $to_users=$values['to_users'];
+            for($i=0, $len=sizeof($to_users); $i<$len; $i++){
+                //insert into message_to_user
+                $statement=$pdo->prepare('INSERT INTO message_to_user (message_id, user_id)
+                    SELECT :msg_id, ua.user_id FROM user_accounts AS ua WHERE ua.username=:un');
+                $statement->bindValue(':msg_id',strval($message_id), PDO::PARAM_STR);
+                $statement->bindValue(':un',strval($to_users[$i]), PDO::PARAM_STR);
+                $statement->execute();
+                unset($statement);
+            }
+
+            //insert receivers: projects to table 'message_to_project'
+            $to_projects=$values['to_projects'];
+            for($i=0, $len=sizeof($to_projects); $i<$len; $i++){
+                //insert into message_to_project
+                $statement=$pdo->prepare('INSERT INTO message_to_project (message_id, project_id)
+                    SELECT :msg_id, pr.project_id FROM projects AS pr WHERE pr.url=:url');
+                $statement->bindValue(':msg_id',strval($message_id), PDO::PARAM_STR);
+                $statement->bindValue(':url',strval($to_projects[$i]), PDO::PARAM_STR);
+                $statement->execute();
+                unset($statement);
+            }
+            
+            $statement=$pdo->prepare('SELECT msg.create_time AS ct, ua.username AS un FROM messages AS msg INNER JOIN user_accounts AS ua ON msg.from_user_id=ua.user_id WHERE msg.message_id=:msg_id ');
+            $statement->bindValue(':msg_id', strval($message_id), PDO::PARAM_STR);
+            $statement->execute();
+
+            $ids = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+            $identification = isset($ids[0]) ? ['username'=>$ids[0]['un'], 'timestamp' => $ids[0]['ct']] : false;
+            unset($statement);
+  // 
+            $pdo->commit();
+
+            unset ($pdo);
+            return $identification;
+        }
+        catch(PDOException $e)
+        {
+            $pdo->rollBack();
+      
+            $outcome=htmlentities(print_r($e,true));
+            echo $outcome;
+            // Report errors
+            unset($pdo);
+            return false;
+        }
+    }
+
     public static function selectMessageById($message_id){
         $pdo=self::newPDO();
         $pdo->beginTransaction();
@@ -561,5 +649,43 @@ class Messages{
             return false;
         }
         unset($pdo);
+    }
+
+    public static function deleteMessageById($message_id){
+        $pdo=self::newPDO();
+        $pdo->beginTransaction();
+        // 
+        try
+        {
+            $statement=$pdo->prepare('DELETE FROM message_to_user WHERE message_id=:mid');
+            $statement->bindValue(':mid',strval($message_id), PDO::PARAM_STR);
+            $statement->execute();
+            
+            $statement=$pdo->prepare('DELETE FROM message_to_project WHERE message_id=:mid');
+            $statement->bindValue(':mid',strval($message_id), PDO::PARAM_STR);
+            $statement->execute();
+            
+            // Prepare the statements
+            $statement=$pdo->prepare('DELETE FROM messages WHERE message_id=:mid
+            ');
+            $statement->bindValue(':mid',strval($message_id), PDO::PARAM_STR);
+            $statement->execute();
+
+            $deleted_num=$statement->rowCount();
+            
+            $pdo->commit();
+            unset ($pdo);
+            return $deleted_num > 0 ? true : false;
+        }
+        catch(PDOException $e)
+        {
+            $pdo->rollBack();
+      
+            $outcome=htmlentities(print_r($e,true));
+            echo $outcome;
+            // Report errors
+            unset($pdo);
+            return false;
+        }
     }
 }

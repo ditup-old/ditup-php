@@ -18,8 +18,14 @@ function route(Array $url){
         'message' => 'Message',
         'messages' => 'Messages',
         'people' => 'people',
-        'project' => 'project',
+        'project' => 'Dit',
+	'idea' => 'Dit',
+	'dit' => 'Dit',
+	'interest' => 'Dit',
         'projects' => 'projects',
+        'dits' => 'Dits',
+        'interests' => 'Interests',
+        'ideas' => 'Ideas',
         'start' => 'start',
         'signup' => 'signup',
         'user' => 'user'
@@ -27,7 +33,7 @@ function route(Array $url){
 
     ];
     $url0 = isset($url[0]) ? $url[0] : 'home';
-    unset($url[0]);
+    if($controllers[$url0]!=='Dit') unset($url[0]);
     $url = $url ? array_values($url) : [];
     if(isset($controllers[$url0]) && file_exists('../app/controllers/' . $controllers[$url0] . '.php')){
         require_once '../app/controllers/' . $controllers[$url0] . '.php';

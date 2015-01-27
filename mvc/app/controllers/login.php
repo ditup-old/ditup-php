@@ -46,7 +46,11 @@ class Login extends Controller
                         $cookie_login::createLoginCookie(['username' => $username]);
                     }
                     //echo 'successfuly logged in (finish this process!)';
-                    header('Location:/');
+                    //here we redirect to page previously visited
+                    //print_r($_SERVER);
+                    //print_r($_SESSION);
+                    header('Location:'.$_SESSION['previous_uri']);
+                    exit();
                 }
                 else{
                     $this->view('login/index', ['errors'=>$errors, 'values'=>['username' => $username]]);
@@ -57,6 +61,8 @@ class Login extends Controller
             }
             else {
                 $this->view('login/index');
+                //print_r($_SERVER, $_SERVER['HTTP_REFERER']);
+                exit();
             }
         }
     }

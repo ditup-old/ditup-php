@@ -20,16 +20,19 @@ class Header
                 <li>feedback</li>
             </ul>
         </li>
+        <li><a href="/dits" >dits</a>
+            <ul>
+                <li><a href="/ideas">ideas</a></li>
+                <li><a href="/projects">projects</a></li>
+                <li><a href="/interests">interests</a></li>
+                <li>explore (categories, tags)</li>' . ($this->loggedin ? '
+                <li><a href="/projects/create">+ create new dit</a></li>' : '') . '
+                
+            </ul>
+        </li>
         <li><a href="/people">people</a>
             <ul>' . ($this->loggedin ? '<li><a href="/user/' . $this->user . '">my profile</a></li>' : '') . '
                 <li>groups</li>
-            </ul>
-        </li>
-        <li><a href="/projects" >projects</a>
-            <ul>
-                <li>explore (categories, tags)</li>' . ($this->loggedin ? '
-                <li><a href="/projects/create">+ create new project</a></li>' : '') . '
-                
             </ul>
         </li>
         <li><a href="/community" >community</a>

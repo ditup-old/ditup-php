@@ -24,6 +24,8 @@ class CreateProject extends Project
     const SUBTITLE_LENGTH_ERROR = 'subtitle can be max 256 characters long';
     const DESCRIPTION_LENGTH = 1024;
     const DESCRIPTION_LENGTH_ERROR = 'description can be max 1024 characters long';
+    const DIT_TYPES = ['idea', 'project', 'interest', 'topic', 'issue'];
+    const DIT_TYPE_ERROR = 'wrong dit type. select from options provided.';
 
     /**
      * General function for entering new project to database. Returns true on success or throws an error. 
@@ -95,6 +97,10 @@ class CreateProject extends Project
         if(!self::validateDescription($values['description'])){
             $ret = false;
             $errors['description'] = '???';
+        }
+        if(!in_array($values['type'], self::DIT_TYPES)){
+            $ret = false;
+            $errors['type'] = self::DIT_TYPE_ERROR;
         }
         return $ret;
     }

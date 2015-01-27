@@ -12,28 +12,22 @@ class Logout extends Controller
 
     public function index()
     {
+        $redirect_uri = isset($_SESSION['previous_uri'])?$_SESSION['previous_uri']:'/';
         if($this->loggedin){
+            //if user is logged in, we will log him out
             session_destroy();
             //deleting login cookies
             $cookie_login = $this->staticModel('CookieLogin');
             $cookie_login::destroyLoginCookie();
 
             echo 'successfuly logged out';
-            header("Location:/"); //improve!!
+            header('Location:'.$redirect_uri); //improve!!
+            exit();
         }
         else {
             echo 'no need to log out. you are not logged in.';
-            header("Location:/"); //improve!!
+            header('Location:'.$redirect_uri); //improve!!
+            exit();
         }
     }
-
-    private function bot(){
-        return false;
-    }
-
-    public function verify($username, $verify_code){
-        $user=$this->model('User');
-        $user->verify(['username' => $username, 'verify_code' => $verify_code]);
-    }
-    
 }

@@ -1,0 +1,15 @@
+profile on web is the same as profile on wiki
+
+change general routing stuff to controllers to be according to standard (big letters etc.)
+general routing can have third option - function to perform with url
+
+make application to submitting and voting for features/ideas to make it better.
+
+  ---------------------------------------------
+  +5  | some idea posted    | accepted/declined/in progress/added
+  ---------------------------------------------
+  +3  | another idea posted | 
+  ---------------------------------------------
+  
+  brainstorming application / getting things done / ... ?
+  next actions...

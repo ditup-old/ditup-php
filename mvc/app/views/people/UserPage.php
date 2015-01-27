@@ -44,12 +44,19 @@ class UserPage extends PageWithHeader {
             $pgh->css($css);
         }
         $pgh->title('user::' . $this->username . ($this->title2===''?'':'::'.$this->title2));
+        $profile_picture='/img/no-picture.png';
+        if(file_exists('img/profile/'.$this->username.'.jpg')){
+             $profile_picture='/img/profile/'.$this->username.'.jpg';
+        }
+        elseif(file_exists('img/profile/'.$this->username.'.png')){
+             $profile_picture='/img/profile/'.$this->username.'.png';
+        }
 
         $begin_body='
     <div>
         <!--each of these menu things will be optional-->
         <div class="profile-header" >
-            <img class="header-avatar" src="" /><h1 class="header-user-name">'. $this->username . '</h1>
+            <img class="header-avatar" src="'.$profile_picture.'" /><h1 class="header-user-name">'. $this->username . '</h1>
             <ul class="header-action-menu">'.
             (
             $this->is_me ? 

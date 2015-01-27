@@ -32,14 +32,15 @@ class Projects extends Controller
         if user is not logged in, go to /log in first
     *****/
         if($this->loggedin){
-            if(isset($_POST, $_POST['projectname'], $_POST['url'], $_POST['subtitle'], $_POST['description'], $_POST['create'])){
+            if(isset($_POST, $_POST['projectname'], $_POST['url'], $_POST['subtitle'], $_POST['description'], $_POST['create'], $_POST['type'])){
                 $project_data=[
                     'creator' => $this->username,
                     'projectname' => $_POST['projectname'],
                     'url' => $_POST['url'],
                     'subtitle' => $_POST['subtitle'],
                     'description' => $_POST['description'],
-                    'create' => $_POST['create']
+                    'create' => $_POST['create'],
+                    'type' => $_POST['type']
                 ];
 
                 try{

@@ -75,6 +75,15 @@ $page->add(print_r($data,true).'<div>edit profile of ' . $data['member'] . '</di
 </table>
 </form>
 
+<div>
+<!--upload profile picture-->
+<form enctype="multipart/form-data" action="" method="post">
+Add/update profile picture (png, jpg, max 2M)
+<input name="profile-picture" type="file">
+<input type="hidden" name="MAX_FILE_SIZE" value="2097152" />
+<input type="submit" value="upload photo">
+</form>
+</div>
 ');
 
 echo $page->generate();

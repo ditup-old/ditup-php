@@ -9,13 +9,13 @@ use Mrkvon\Ditup\Core\Controller as Controller;
  * /projects/new, /projects/create
 **/
 
-class Project extends Controller
+class Dit extends Controller
 {
     public static function route($url){
         $self = new self;
-        $self->index(isset($url[0]) ? $url[0] : '', isset($url[1]) ? $url[1] : '');
+        $self->index($url[0], isset($url[1]) ? $url[1] : '', isset($url[2]) ? $url[2] : '');
     }
-    public function index($url = '', $action = '')
+    public function index($dit_type, $url = '', $action = '')
     {
         $project = $this->model('Project');
         if($url === ''){
@@ -23,6 +23,9 @@ class Project extends Controller
         }
         elseif($project->exists($url)){
             $pr=$project->getProjectByUrl($url);
+            $type=$pr['type'];
+            if($type!==$dit_type) header('Location:/'.$type.'/'.$url.'/'.$action);
+
             $data = [
                 'loggedin' => $this->loggedin,
                 'user-me' => $this->username,

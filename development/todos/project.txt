@@ -1,0 +1,21 @@
+fix: edit project/ dit
+change project->dit
+change projects->dits etc.
+
+visibility of project can be set: (everybody, logged in, only members)
+searchability of project can be set
+
+it is possible to show if project looks for/accepts people.
+
+projects can be developed slowly: first it is idea or issue; topic; interest. Then it becomes project when people want to develop it.
+  * url: /['idea'|'topic'|'interest'|'project']/[url], redirect to current status of the "dit"
+  
+  
+submit your idea to project as an outsider to make it better.
+
+next actions decide.
+
+how to manage admins??
+  * you can give up being admin.
+  * people can vote admins off
+  * no admin -> election or anarchy administration

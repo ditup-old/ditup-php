@@ -1,0 +1,9 @@
+add profile picture, show profile picture, delete profile picture
+  adding profile picture should be done with some nice UX: selecting square for profile pic etc.
+
+shall we have user photos?
+  probably not. users can link to some photo galleries.
+
+references
+
+??reputation (by activity, project membership and votes/references from others) : general reputation, reputation connected to project activity (member/admin/supporter)

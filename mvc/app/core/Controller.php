@@ -11,6 +11,14 @@ class Controller
         //*** starting session and setting session variables if they don't exist  */
         session_start();
         //print_r($_SESSION);
+        $_SESSION['previous_uri'] = isset($_SESSION['previous_uri']) ? $_SESSION['previous_uri'] : '/';
+        $_SESSION['current_uri'] = isset($_SESSION['current_uri'])?$_SESSION['current_uri'] : '/';
+        //print_r($_SESSION);
+        $_SESSION['previous_uri']=($_SERVER['REQUEST_URI']!=$_SESSION['current_uri'])?$_SESSION['current_uri']:$_SESSION['previous_uri'];
+        $_SESSION['current_uri']=$_SERVER['REQUEST_URI'];
+        //print_r($_SESSION);
+
+        //print_r($_SESSION);
         if(!isset($_SESSION['loggedin'],$_SESSION['username'], $_SESSION['from_form']) || $_SESSION['loggedin']!==true)
         {
             /****
