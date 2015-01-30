@@ -17,7 +17,7 @@ class Header
             <ul>
                 <li><a href="/start">about</a></li>
                 <li><a href="/development">development</a></li>
-                <li>feedback</li>
+                <li><a href="/feedback">feedback</a></li>
             </ul>
         </li>
         <li><a href="/dits" >dits</a>
@@ -26,7 +26,7 @@ class Header
                 <li><a href="/projects">projects</a></li>
                 <li><a href="/interests">interests</a></li>
                 <li>explore (categories, tags)</li>' . ($this->loggedin ? '
-                <li><a href="/projects/create">+ create new dit</a></li>' : '') . '
+                <li><a href="/dits/create">+ create new dit</a></li>' : '') . '
                 
             </ul>
         </li>

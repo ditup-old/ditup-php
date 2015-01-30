@@ -15,19 +15,26 @@ class Projects extends Controller
     public static function route($url){
         $self = new self;
         if(isset($url[0])){
-            $self->$url[0]();
+            if($url[0]=='create'){
+                $self->create();
+            }
+            else{
+                $self->view('general/404', [
+                    'loggedin' => $self->loggedin,
+                    'user-me' => $self->username,
+                ]); 
+            }
         }
         else{
             $self->index();
         }
     }
-    public function index()
-    {
+
+    public function index(){
         $this->view('projects/index', ['loggedin' => $this->loggedin, 'user-me' => $this->username]);
     }
 
-    public function create()
-    {
+    public function create(){
     /***if user is logged in, go to create page.
         if user is not logged in, go to /log in first
     *****/

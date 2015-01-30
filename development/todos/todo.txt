@@ -1,0 +1,37 @@
+design personal chat p:Chat p:Ditup U:3 I:3 T:1H S:2015-01-29
+design group chat p:Chat U:3 I:3 T:1H S:2015-01-29
+change username/create_time to message_id p:Messages U:3 I:3 T:1H S:2015-01-29
+design message read/unread p:Messages U:3 I:3 T:1H S:2015-01-29
+create read/unread/deleted table p:Messages-read U:3 I:3 T:1H S:2015-01-29
+if delete message, message will be deleted from read/unread/delete table. Drafts will be deleted immediately. p: Messages-read U:3 I:3 T:1H S:2015-01-29
+Profile on web is the same as profile on wiki p:Ditup U:3 I:3 T:1H S:2015-01-29
+Change general routing and controllers to conform to standard (big letters etc.) p:Ditup U:3 I:3 T:1H S:2015-01-29
+general routing can have third option - function to perform p:Ditup U:3 I:3 T:1H S:2015-01-29
+Make application to submitting and voting for features/ideas to make ditup better. p:Ditup U:3 I:3 T:1H S:2015-01-29
+Brainstorming application / getting things done/ ... ? p:Ditup !someday U:3 I:3 T:1H S:2015-01-29
+next actions for projects p:Ditup !someday U:3 I:3 T:1H S:2015-01-29
+fix: edit project/dit p:Projects p:Ditup U:3 I:3 T:1H S:2015-01-29
+change "project"->"dit" p:Projects p:Ditup U:3 I:3 T:1H S:2015-01-29
+change "projects"->"dits" etc. p:Projects p:Ditup U:3 I:3 T:1H S:2015-01-29
+visibility of project can be set (everybody, logged in, only members) p:Projects U:3 I:3 T:1H S:2015-01-29
+searchability of project can be set p:Projects U:3 I:3 T:1H S:2015-01-29
+it is possible to show if project looks for/accepts people. p:Projects U:3 I:3 T:1H S:2015-01-29
+submit your idea to project as an outsider to make it better. p:Projects U:3 I:3 T:1H S:2015-01-29
+next actions deciding p:Projects U:3 I:3 T:1H S:2015-01-29
+how to manage admins? - you can give up being admin; - people can vote admins off; - no admin -> election or anarchy administration. p:Projects ref:managing U:3 I:3 C:100 T:1H S:2015-01-29
+design search p:Search U:3 I:3 T:1H S:2015-01-29
+search by tags p:Search U:3 I:3 T:1H S:2015-01-29
+search projects by tags p:Search U:3 I:3 T:1H S:2015-01-29
+search projects by interests p:Search U:3 I:3 T:1H S:2015-01-29
+search search users by name, username p:Search U:3 I:3 T:1H S:2015-01-29
+search users by place p:Search U:3 I:3 T:1H S:2015-01-29
+search users by interest p:Search U:3 I:3 T:1H S:2015-01-29
+it should be possible to make users unsearchable if they decide p:Search U:3 I:3 T:1H S:2015-01-29
+make antispam (look at nomadwiki, trashwiki) p:Signup U:3 I:3 T:1H S:2015-01-29
+design tags and make next actions/todos p:Tags U:3 I:3 T:1H S:2015-01-29
+add profile picture, show profile picture, delete profile picture p:User U:3 I:3 T:1H S:2015-01-29
+design nice UX for profile pic. (selecting square for profile pic etc.) p:User U:3 I:3 T:1H S:2015-01-29
+shall we have user photos? (probably not, user can link to some photo galleries) p:User U:3 I:3 T:1H S:2015-01-29
+design references @User U:3 I:3 T:1H S:2015-01-29
+??reputation (by activity, project membership and votes/references from others) : general reputation, reputation connected to project activity (member/admin/supporter) p:User U:3 I:3 T:1H S:2015-01-29
+design and create map of people and projects p:Map U:3 I:3 T:1H S:2015-01-29

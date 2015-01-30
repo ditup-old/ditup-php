@@ -10,41 +10,45 @@ function route(Array $url){
 
     $controllers=[
         'change-password' => 'ChangePassword',
-        'community' => 'community',
-        'home' => 'home',
-        'login' => 'login',
-        'logout' => 'logout',
+        'community' => 'Community',
+	'dit' => 'Dit',
+        'dits' => 'Dits',
+        'feedback' => 'Feedback',
+        'home' => 'Home',
+	'idea' => 'Dit',
+        'ideas' => 'Ideas',
+	'interest' => 'Dit',
+        'interests' => 'Interests',
+        'login' => 'Login',
+        'logout' => 'Logout',
         'logout-all' => 'LogoutAll',
         'message' => 'Message',
         'messages' => 'Messages',
-        'people' => 'people',
+        'people' => 'People',
         'project' => 'Dit',
-	'idea' => 'Dit',
-	'dit' => 'Dit',
-	'interest' => 'Dit',
-        'projects' => 'projects',
-        'dits' => 'Dits',
-        'interests' => 'Interests',
-        'ideas' => 'Ideas',
-        'start' => 'start',
-        'signup' => 'signup',
-        'user' => 'user'
-
-
+        'projects' => 'Projects',
+        'start' => 'Start',
+        'signup' => 'Signup',
+        'user' => 'User'
     ];
+
     $url0 = isset($url[0]) ? $url[0] : 'home';
-    if($controllers[$url0]!=='Dit') unset($url[0]);
-    $url = $url ? array_values($url) : [];
     if(isset($controllers[$url0]) && file_exists('../app/controllers/' . $controllers[$url0] . '.php')){
         require_once '../app/controllers/' . $controllers[$url0] . '.php';
         
+        if($controllers[$url0]!=='Dit') unset($url[0]);
+        $url = $url ? array_values($url) : [];
+
         $control_class = 'Mrkvon\\Ditup\\Controller\\'.$controllers[$url0];
-        
+
         $control_class::route($url);
+        exit();
     }
     else{
-       echo ('404 not found');
-       exit();
+        require_once '../app/controllers/404.php';
+        $control_class = 'Mrkvon\Ditup\Controller\Fof';
+        $control_class::route();
+        exit();
     }
 
 /*        if(file_exists('../app/controllers/' . $url[0] . '.php'))

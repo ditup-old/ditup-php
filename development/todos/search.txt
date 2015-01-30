@@ -6,4 +6,4 @@ search is working
   search users by place
   search users by interest
   
-  users should by unsearchable.
+  users should be unsearchable.
