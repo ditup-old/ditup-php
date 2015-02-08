@@ -10,6 +10,8 @@ class Controller
     {
         //*** starting session and setting session variables if they don't exist  */
         session_start();
+        
+        //print_r($_SERVER['REQUEST_URI']);
         //print_r($_SESSION);
         $_SESSION['previous_uri'] = isset($_SESSION['previous_uri']) ? $_SESSION['previous_uri'] : '/';
         $_SESSION['current_uri'] = isset($_SESSION['current_uri'])?$_SESSION['current_uri'] : '/';

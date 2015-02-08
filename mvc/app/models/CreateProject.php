@@ -45,11 +45,142 @@ class CreateProject extends Project
         }
     }
 
+    public function editUrl($old_url, $new_url, &$errors){
+        if(self::validateEditUrl($old_url, $new_url, $errors)){
+            $database_projects = new Database\Projects;
+            if($database_projects->updateUrl($old_url, $new_url)){
+                unset($database_project);
+                return true;
+            }
+            else {
+                $errors=['database' => 'DATABASE PROBLEM'];
+                return false;
+            }
+        }
+        else{
+            return false;
+        }
+    }
+
+    public function edit($url, $data, &$errors){
+        //print_r($data);
+        if(self::validateEdit($url, $data, $errors)){
+            
+            $database_projects = new Database\Projects;
+            if($database_projects->updateProject($url, $data)){
+                unset($database_project);
+                return true;
+            }
+            else {
+                $errors=['database' => 'DATABASE PROBLEM'];
+                return false;
+            }
+        }
+        else{
+            return false;
+        }
+    }
+
+    private function validateEditUrl($url, $new_url, &$errors){
+        $errors=[];
+        $ret=true;
+
+        $url_errs=[];
+        if(!self::validateUrl($new_url, $url_errs)){
+            $ret = false;
+            $errors['url'] = isset($errors['url'])?$errors['url']:[];
+            foreach($url_errs as $urer){
+                $errors['url'][]=$urer;
+            }
+        }
+        if($new_url!=$url && self::urlExists($new_url)){
+            $ret = false;
+            $errors['url'] = isset($errors['url'])?$errors['url']:[];
+            $errors['url'][] = self::URL_UNIQUE_ERROR;
+        }
+        return $ret;
+    }
+
+    private function validateEdit($url, $values, &$errors){
+        /***
+         * requirements:
+         * submit value exists
+         * projectname has limited length
+         * project url is unique
+         * project url has limited length
+         */
+        $errors=[];
+        $ret=true;
+        //*submit button name present? turned off.
+        if(!isset($values['save'])){
+            $ret = false;
+            $errors['save'] = 'submit error';
+        }
+        //*/
+        $pn_errors = Array();
+        if(!self::validateName($values['ditname'], $pn_errors)){
+            $ret = false;
+            $errors['ditname']=isset($errors['ditname'])?$errors['ditname']:[];
+            foreach($pn_errors as $err){
+                $errors['ditname'][] = $err;
+            }
+        }
+        $pn_errors = [];
+        /*
+        if(self::projectnameExists($values['ditname'])){
+            $ret = false;
+            if(isset($errors['ditname'])){
+                $errors['ditname'][] = self::PROJECTNAME_UNIQUE_ERROR;
+            }
+            else{
+                $errors['ditname']=[self::PROJECTNAME_UNIQUE_ERROR];
+            }
+        }
+        ///
+        $url_errs=[];
+        if(!self::validateUrl($values['url'], $url_errs)){
+            $ret = false;
+            $errors['url'] = isset($errors['url'])?$errors['url']:[];
+            foreach($url_errs as $urer){
+                $errors['url'][]=$urer;
+            }
+        }
+        if($values['url']!=$url && self::urlExists($values['url'])){
+            $ret = false;
+            $errors['url'] = isset($errors['url'])?$errors['url']:[];
+            $errors['url'][] = self::URL_UNIQUE_ERROR;
+        }
+        */
+        $pn_errors=[];
+        if(!self::validateSubtitle($values['subtitle'], $pn_errors)){
+            $ret = false;
+            //$errors['subtitle'] = 'length??';
+            $errors['subtitle']=isset($errors['subtitle'])?$errors['subtitle']:[];
+            foreach($pn_errors as $err){
+                $errors['subtitle'][] = $err;
+            }
+        }
+        $pn_errors=[];
+        if(!self::validateDescription($values['description'], $pn_errors)){
+            $ret = false;
+            $errors['description']=isset($errors['description'])?$errors['description']:[];
+            foreach($pn_errors as $err){
+                $errors['description'][] = $err;
+            }
+        }
+        if(!in_array($values['type'], self::DIT_TYPES)){
+            $ret = false;
+            $errors['type'] = self::DIT_TYPE_ERROR;
+        }
+        return $ret;
+    }
+
     private function validate($values, &$errors){
         /***
          * requirements:
          * submit value exists
          * projectname has limited length
+         * not_required: ditname is unique
          * project url is unique
          * project url has limited length
          */
@@ -60,23 +191,25 @@ class CreateProject extends Project
             $errors['create'] = 'submit error';
         }
         $pn_errors = Array();
-        if(!self::validateName($values['projectname'], $pn_errors)){
+        if(!self::validateName($values['ditname'], $pn_errors)){
             $ret = false;
-            $errors['projectname']=isset($errors['projectname'])?$errors['projectname']:[];
+            $errors['ditname']=isset($errors['ditname'])?$errors['ditname']:[];
             foreach($pn_errors as $err){
-                $errors['projectname'][] = $err;
+                $errors['ditname'][] = $err;
             }
         }
         $pn_errors = [];
-        if(self::projectnameExists($values['projectname'])){
+        /*
+        if(self::projectnameExists($values['ditname'])){
             $ret = false;
-            if(isset($errors['projectname'])){
-                $errors['projectname'][] = self::PROJECTNAME_UNIQUE_ERROR;
+            if(isset($errors['ditname'])){
+                $errors['ditname'][] = self::PROJECTNAME_UNIQUE_ERROR;
             }
             else{
-                $errors['projectname']=[self::PROJECTNAME_UNIQUE_ERROR];
+                $errors['ditname']=[self::PROJECTNAME_UNIQUE_ERROR];
             }
         }
+        */
         $url_errs=[];
         if(!self::validateUrl($values['url'], $url_errs)){
             $ret = false;
@@ -129,13 +262,22 @@ class CreateProject extends Project
         return $ret;
     }
 
-    private static function validateSubtitle($subtitle) {
-        return strlen($subtitle) <= self::SUBTITLE_LENGTH;
+    private static function validateSubtitle($subtitle, &$errors=[]) {
+        $ret=true;
+        if(!strlen($subtitle) <= self::SUBTITLE_LENGTH){
+            $ret=false;
+            $errors[]=self::SUBTITLE_LENGTH_ERROR;
+        }
+        return $ret;
     }
 
-
-    private static function validateDescription($description) {
-        return strlen($description) <= self::DESCRIPTION_LENGTH;
+    private static function validateDescription($description, &$errors=[]) {
+        $ret=true;
+        if(strlen($description) > self::DESCRIPTION_LENGTH){
+            $ret=false;
+            $errors[]=self::DESCRIPTION_LENGTH_ERROR;
+        }
+        return $ret;
     }
 
     public static function urlExists($url){

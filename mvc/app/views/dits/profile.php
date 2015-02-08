@@ -1,21 +1,22 @@
 <?php
 
-require_once '../app/views/projects/ProjectPage.php';
-use Mrkvon\Ditup\View\Project\ProjectPage as ProjectPage;
+require_once '../app/views/dits/DitPage.php';
+use Mrkvon\Ditup\View\Dit\DitPage as DitPage;
 
 $action=$data['action'];
-$page=new ProjectPage($data['loggedin'], $data['user-me']);
-$page->setProjectname($data['projectname'], $data['url']);
+$values=$data['profile'];
+$page=new DitPage($data['loggedin'], $data['user-me']);
+$page->setProjectname($values['ditname'], $values['url']);
 $page->setMember($data['is_member']);
 $page->setAdmin($data['is_admin']);
-$page->setSubtitle($data['subtitle']);
+$page->setSubtitle($values['subtitle']);
 
 switch($action){
     case '':
         $content = '
             <table>
                 <tbody>
-                    <tr><th>general</th><td>projectname</td><td>' . $data['projectname'] . '</td></tr>
+                    <tr><th>general</th><td>projectname</td><td>' . $values['ditname'] . '</td></tr>
                 </tbody>
             </table>' . print_r($data,true).
             
@@ -60,7 +61,7 @@ switch($action){
         break;
     default:
         $page->title('error');
-        $content = $data['projectname'].'::'.$action.' This option does not exist. '.print_r($data, true);
+        $content = $values['ditname'].'::'.$action.' This option does not exist. '.print_r($data, true);
         break;
 }
 

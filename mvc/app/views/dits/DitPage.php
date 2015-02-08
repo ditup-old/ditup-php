@@ -1,14 +1,14 @@
 <?php
-namespace Mrkvon\Ditup\View\Project;
+namespace Mrkvon\Ditup\View\Dit;
 
 use \PageWithHeader;
 
 require_once(trim($_SERVER['DOCUMENT_ROOT']).'/mvc/app/views/general/PageWithHeader.php');
 
-class ProjectPage extends PageWithHeader {
+class DitPage extends PageWithHeader {
 
     /****standard use
-    $pp = new ProjectPage($loggedin,$user-me);
+    $pp = new DitPage($loggedin,$user-me);
     $pp->setMember(true);
     $pp->setAdmin(true);
     $pp->title('blabla');

@@ -82,7 +82,7 @@ class Messages
 
     public static function readMessage($username, $timestamp, $request_username){
         if(Database\Messages::rightToRead($username, $timestamp, $request_username)){
-            return Database\Messages::selectMessage($username, $timestamp);
+            return Database\Messages::selectMessage($username, $timestamp, $request_username);
         }
         else return false;
     }
@@ -91,7 +91,7 @@ class Messages
         $ids=Database\Messages::selectMessageIdsOfUser($username, 'RECEIVED');
         $messages=[];
         for($i=0, $len=sizeof($ids); $i<$len; $i++){
-            $messages[]=Database\Messages::SelectMessageById($ids[$i]);
+            $messages[]=Database\Messages::SelectMessageById($ids[$i], $username);
         }
         return $messages;
     }
@@ -100,7 +100,7 @@ class Messages
         $ids=Database\Messages::selectMessageIdsOfUser($username, 'SENT');
         $messages=[];
         for($i=0, $len=sizeof($ids); $i<$len; $i++){
-            $messages[]=Database\Messages::SelectMessageById($ids[$i]);
+            $messages[]=Database\Messages::SelectMessageById($ids[$i], $username);
         }
         return $messages;
     }
@@ -109,7 +109,7 @@ class Messages
         $ids=Database\Messages::selectMessageIdsOfUser($username, 'DRAFTS');
         $messages=[];
         for($i=0, $len=sizeof($ids); $i<$len; $i++){
-            $messages[]=Database\Messages::SelectMessageById($ids[$i]);
+            $messages[]=Database\Messages::SelectMessageById($ids[$i], $username);
         }
         return $messages;
     }

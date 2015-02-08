@@ -20,7 +20,7 @@ class Messages{
     selectMessagesOfProject($projectname, $incoming_or_outgoing);
     selectMessagesOfUser($username, $incoming_or_outgoing);
     rightToRead($username, $create_time, $request_username);
-    selectMessage($username, $create_time)
+    selectMessage($username, $create_time, $request_username);
     deleteMessage($username, $create_time);
     ******/
 
@@ -108,14 +108,27 @@ class Messages{
             }
             //RECEIVED
             elseif($flag=='RECEIVED'){
-                $query='
+                $query='SELECT DISTINCT message_id FROM message_status
+                WHERE to_user_id=:uid';
+/*
+            //old query
+            $query='
                 SELECT DISTINCT msg.message_id FROM messages AS msg
-                JOIN message_to_user AS mtu ON msg.message_id=mtu.message_id
-                JOIN message_to_project AS mtp ON msg.message_id=mtp.message_id
+                LEFT JOIN message_to_user AS mtu ON msg.message_id=mtu.message_id
+                LEFT JOIN message_to_project AS mtp ON msg.message_id=mtp.message_id
                 WHERE mtu.user_id=@uid
-                OR mtp.message_id IN
+                OR mtp.project_id IN
                     (SELECT pu.project_id FROM project_user AS pu, (SELECT @uid:=:uid) AS v WHERE user_id = @uid)';
+*/          
             }
+//.' LEFT JOIN message_status AS mst ON msg.message_id=mst.message_id
+//WHERE msg.message_id=:mid'
+//.' AND mst.to_user_id IN'
+//.' (SELECT user_id FROM user_accounts WHERE username=:run)'
+//.' AND mst.to_user_id IS NOT NULL'
+//.' AND mst.delete_time IS NULL'
+
+            
             /*
             $query1='SELECT DISTINCT message_id FROM message_to_user, message_to_project WHERE
             send_time IS NOT NULL
@@ -335,6 +348,22 @@ class Messages{
                 unset($statement);
             }
             
+            //if message was sent, insert receivers - users to table message_status
+            if($flag=='SEND'){
+                //insert users to which the message was sent directly
+                $statement=$pdo->prepare('INSERT INTO message_status (message_id, to_user_id)
+                        SELECT DISTINCT @msg_id, ua.user_id FROM user_accounts AS ua
+                        JOIN message_to_user AS mtu ON ua.user_id=mtu.user_id
+                        JOIN project_user AS pu ON ua.user_id=pu.user_id
+                        WHERE mtu.message_id=@msg_id
+                        OR (pu.project_id IN
+                            (SELECT DISTINCT mtp.project_id FROM message_to_project AS mtp, (SELECT @msg_id:=:msg_id) AS v WHERE mtp.message_id=@msg_id)
+                            AND pu.relationship IN (\'admin\', \'member\'))');
+                $statement->bindValue(':msg_id',strval($message_id), PDO::PARAM_STR);
+                $statement->execute();
+                unset($statement);
+            }
+
             $statement=$pdo->prepare('SELECT msg.create_time AS ct, ua.username AS un FROM messages AS msg INNER JOIN user_accounts AS ua ON msg.from_user_id=ua.user_id WHERE msg.message_id=:msg_id ');
             $statement->bindValue(':msg_id', strval($message_id), PDO::PARAM_STR);
             $statement->execute();
@@ -361,24 +390,31 @@ class Messages{
         }
     }
 
-    public static function selectMessageById($message_id){
+    public static function selectMessageById($message_id, $request_username){
         $pdo=self::newPDO();
         $pdo->beginTransaction();
         // 
         try
         {
             // Prepare the statements
-            $statement=$pdo->prepare('SELECT ua.username AS from_username, pr.projectname AS from_projectname, pr.url AS from_url, msg.message_id, msg.subject, msg.message, msg.send_time, msg.read_time, msg.create_time FROM messages AS msg
+            $statement=$pdo->prepare('SELECT ua.username AS from_username, pr.projectname AS from_projectname, pr.url AS from_url, msg.message_id, msg.subject, msg.message, msg.send_time, msg.create_time, mst.read_time AS read_time FROM messages AS msg
                 LEFT JOIN user_accounts AS ua ON msg.from_user_id=ua.user_id
-                LEFT JOIN projects AS pr ON pr.project_id=msg.from_project_id
-                WHERE msg.message_id=:mid
-            ');
+                LEFT JOIN projects AS pr ON pr.project_id=msg.from_project_id'
+                .' LEFT JOIN message_status AS mst ON msg.message_id=mst.message_id
+                WHERE msg.message_id=:mid'
+                //.' AND mst.to_user_id IN'
+                //.' (SELECT user_id FROM user_accounts WHERE username=:run)'
+                //.' AND mst.to_user_id IS NOT NULL'
+                //.' AND mst.delete_time IS NULL'
+            );
             $statement->bindValue(':mid',strval($message_id), PDO::PARAM_STR);
+            //$statement->bindValue(':run',strval($request_username), PDO::PARAM_STR);
             $statement->execute();
             
             $rows = $statement->fetchAll(PDO::FETCH_ASSOC);
             $message = isset($rows[0]) ?
                 [
+                    'id'=>$rows[0]['message_id'],
                     'from-user'=>[
                         'username'=>$rows[0]['from_username']
                     ],
@@ -393,8 +429,9 @@ class Messages{
                     'subject'=>$rows[0]['subject'],
                     'message'=>$rows[0]['message'],
                     'send-time'=>$rows[0]['send_time'],
-                    'read-time'=>$rows[0]['read_time'],
+                    //'read-time'=>$rows[0]['read_time'],
                     'create-time'=>$rows[0]['create_time'],
+                    'read-time'=>$rows[0]['read_time'],
                     'to-users'=>[],
                     'to-projects'=>[]
                 ]
@@ -447,7 +484,7 @@ class Messages{
         }
     }
 
-    public static function selectMessage($from_username, $create_time){
+    public static function selectMessage($from_username, $create_time, $request_username){
         $pdo = new PDO('mysql:host='.Login\HOSTNAME.';dbname='. Login\DATABASE .';charset=utf8', Login\USERNAME, Login\PASSWORD);
     
     //****************without these lines it will not catch error and not transaction well. not rollback.********
@@ -459,7 +496,7 @@ class Messages{
         try
         {
             // Prepare the statements
-            $statement=$pdo->prepare('SELECT ua.username AS from_username, pr.projectname AS from_projectname, pr.url AS from_url, msg.message_id, msg.subject, msg.message, msg.send_time, msg.read_time, msg.create_time FROM messages AS msg
+            $statement=$pdo->prepare('SELECT ua.username AS from_username, pr.projectname AS from_projectname, pr.url AS from_url, msg.message_id, msg.subject, msg.message, msg.send_time, msg.create_time FROM messages AS msg
                 LEFT JOIN user_accounts AS ua ON msg.from_user_id=ua.user_id
                 LEFT JOIN projects AS pr ON pr.project_id=msg.from_project_id
                 WHERE msg.message_id IN
@@ -473,6 +510,22 @@ class Messages{
             $statement->bindValue(':un',strval($from_username), PDO::PARAM_STR);
             $statement->bindValue(':ct',strval($create_time), PDO::PARAM_STR);
             $statement->execute();
+
+            $statement2=$pdo->prepare('UPDATE message_status AS mst SET mst.read_time=UNIX_TIMESTAMP()
+            WHERE mst.read_time IS NULL
+            AND mst.message_id IN
+                (SELECT message_id FROM messages
+                    WHERE create_time=:ct
+                    AND from_user_id IN
+                        (SELECT user_id FROM user_accounts WHERE username=:un)
+                )
+            AND mst.to_user_id IN
+                (SELECT user_id FROM user_accounts WHERE username=:run)
+            ');
+            $statement2->bindValue(':un',strval($from_username), PDO::PARAM_STR);
+            $statement2->bindValue(':run',strval($request_username), PDO::PARAM_STR);
+            $statement2->bindValue(':ct',strval($create_time), PDO::PARAM_STR);
+            $statement2->execute();
             
             $rows = $statement->fetchAll(PDO::FETCH_ASSOC);
             $message = isset($rows[0]) ?
@@ -491,7 +544,7 @@ class Messages{
                     'subject'=>$rows[0]['subject'],
                     'message'=>$rows[0]['message'],
                     'send-time'=>$rows[0]['send_time'],
-                    'read-time'=>$rows[0]['read_time'],
+                    //'read-time'=>$rows[0]['read_time'],
                     'create-time'=>$rows[0]['create_time'],
                     'to-users'=>[],
                     'to-projects'=>[]
@@ -569,7 +622,8 @@ class Messages{
         $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
         // Start the transaction. PDO turns autocommit mode off depending on the driver, you don't need to implicitly say you want it off
         $pdo->beginTransaction();
-        // 
+        //
+        $flag = $values['sent']===true ? 'SEND' : 'DRAFT';
         try
         {
             // Prepare the statements
@@ -621,6 +675,23 @@ class Messages{
                     SELECT :msg_id, pr.project_id FROM projects AS pr WHERE pr.url=:url');
                 $statement->bindValue(':msg_id',strval($message_id), PDO::PARAM_STR);
                 $statement->bindValue(':url',strval($to_projects[$i]), PDO::PARAM_STR);
+                $statement->execute();
+                unset($statement);
+            }
+
+            //if message was sent, insert receivers - users to table message_status
+            if($flag=='SEND' && $message_id){
+                //insert users to which the message was sent directly
+                $statement=$pdo->prepare('INSERT INTO message_status (message_id, to_user_id)
+                        SELECT DISTINCT @msg_id, ua.user_id FROM user_accounts AS ua
+                        JOIN message_to_user AS mtu ON ua.user_id=mtu.user_id
+                        JOIN project_user AS pu ON ua.user_id=pu.user_id
+                        WHERE mtu.message_id=@msg_id
+                        OR (pu.project_id IN
+                            (SELECT DISTINCT mtp.project_id FROM message_to_project AS mtp, (SELECT @msg_id:=:msg_id) AS v WHERE mtp.message_id=@msg_id)
+                            AND pu.relationship IN (\'admin\', \'member\')
+                        )');
+                $statement->bindValue(':msg_id', strval($message_id), PDO::PARAM_STR);
                 $statement->execute();
                 unset($statement);
             }

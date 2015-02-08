@@ -40,7 +40,7 @@ echo '<!DOCTYPE html>
             <ul>
                 <li>We are developing</li>
                 <li><a href="/">demo</a> (unstable, work in progress)</li>
-                <li><a class="not-there" href="../we-want-you">Join our team!</a> <a target="_blank" href="http://mrkvon.org">(contact)</a></li>
+                <li><a href="../we-want-you">Join our team!</a> <a target="_blank" href="http://mrkvon.org">(contact)</a></li>
                 <li><a href="/development">Check the development process</a></li>
                 <li><a href="/signup">Create your profile</a> (unstable)</li>
                 <!--li><a href="../subscribe">Subscribe for news</a> (work in progress)</li-->

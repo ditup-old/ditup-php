@@ -11,8 +11,82 @@ require_once dirname(__FILE__).'/DbAccess.php';
 
 class Projects extends DbAccess
 {
+    public static function updateUrl($old_url, $new_url){
+        if(true){
+            $pdo = self::newPDO();
+            $pdo->beginTransaction();
+            
+            try{
+                // Prepare the statements
+                $statement=$pdo->prepare('UPDATE projects SET url=:nurl WHERE url=:url');
 
-    public function insertProject(Array $values){
+                $statement->bindValue(':nurl' ,strval($new_url), PDO::PARAM_STR);
+                $statement->bindValue(':url' ,strval($old_url), PDO::PARAM_STR);
+                $statement->execute();
+                unset($statement);
+
+                $pdo->commit();
+
+                unset($pdo);
+
+                return true;
+            }
+            catch(PDOException $e)
+            {
+                $pdo->rollBack();
+                //throw new Exception('database problem: ' . $e);
+                unset($pdo);
+                return false;
+                // Report errors
+            }
+            unset($pdo);
+            return false;
+        }
+        else{
+            return false;
+        }
+    }
+
+    public static function updateProject($url, Array $values){
+        if(true){
+            $pdo = self::newPDO();
+            $pdo->beginTransaction();
+            
+            try{
+                // Prepare the statements
+                $statement=$pdo->prepare('UPDATE projects SET projectname=:pn, type=:type, subtitle=:st, description=:de WHERE url=:url');
+
+                $statement->bindValue(':pn' ,strval($values['ditname']), PDO::PARAM_STR);
+                $statement->bindValue(':type' ,strval($values['type']), PDO::PARAM_STR);
+                $statement->bindValue(':st' ,strval($values['subtitle']), PDO::PARAM_STR);
+                $statement->bindValue(':de' ,strval($values['description']), PDO::PARAM_STR);
+                $statement->bindValue(':url' ,strval($url), PDO::PARAM_STR);
+                $statement->execute();
+                unset($statement);
+
+                $pdo->commit();
+
+                unset($pdo);
+
+                return true;
+            }
+            catch(PDOException $e)
+            {
+                $pdo->rollBack();
+                //throw new Exception('database problem: ' . $e);
+                unset($pdo);
+                return false;
+                // Report errors
+            }
+            unset($pdo);
+            return false;
+        }
+        else{
+            return false;
+        }
+    }
+
+    public static function insertProject(Array $values){
         if(isset($values, $values['projectname'], $values['url'], $values['subtitle'], $values['description'], $values['creator'])){
             $pdo = new PDO('mysql:host='.Login\HOSTNAME.';dbname='. Login\DATABASE .';charset=utf8', Login\USERNAME, Login\PASSWORD);
         
@@ -237,5 +311,15 @@ class Projects extends DbAccess
         }
         unset($pdo);
         return $ret;
+    }
+
+    private static function newPDO(){
+        $pdo = new PDO('mysql:host='.Login\HOSTNAME.';dbname='. Login\DATABASE .';charset=utf8', Login\USERNAME, Login\PASSWORD);
+    
+    //****************without these lines it will not catch error and not transaction well. not rollback.********
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+        // Start the transaction. PDO turns autocommit mode off depending on the driver, you don't need to implicitly say you want it off
+        return $pdo;
     }
 }

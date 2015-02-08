@@ -91,7 +91,7 @@ class UserPage extends PageWithHeader {
             <ul>
                 <li><a href="/user/' . $this->username . '">general summary (landing page)</a></li>
                 <li><a href="/user/' . $this->username . '/info">personal info</a></li>
-                <li><a href="/user/' . $this->username . '/projects">projects</a></li>
+                <li><a href="/user/' . $this->username . '/dits">dits</a></li>
                 <li><a href="/user/' . $this->username . '/interests">interests, what she wants to do</a></li>
                 <li><a href="/user/' . $this->username . '/activity">recent activity</a></li>
                 <li><a href="/user/' . $this->username . '/connections">connections (friends)</a></li>

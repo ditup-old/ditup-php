@@ -31,14 +31,14 @@ class Projects extends Controller
     }
 
     public function index(){
-        $this->view('projects/index', ['loggedin' => $this->loggedin, 'user-me' => $this->username]);
+        $this->view('dits/projects/index', ['loggedin' => $this->loggedin, 'user-me' => $this->username]);
     }
 
-    public function create(){
+    //public function create(){
     /***if user is logged in, go to create page.
         if user is not logged in, go to /log in first
     *****/
-        if($this->loggedin){
+/*        if($this->loggedin){
             if(isset($_POST, $_POST['projectname'], $_POST['url'], $_POST['subtitle'], $_POST['description'], $_POST['create'], $_POST['type'])){
                 $project_data=[
                     'creator' => $this->username,
@@ -54,7 +54,7 @@ class Projects extends Controller
                     $errors = [];
                     $create_project = $this->model('CreateProject');
                     if(!$create_project->create($project_data, $errors)){
-                        $this->view('projects/create', [
+                        $this->view('dits/create', [
                             'loggedin' => $this->loggedin,
                             'user-me' => $this->username,
                             'values' => $project_data,
@@ -76,11 +76,12 @@ class Projects extends Controller
 
             }
             else{
-                $this->view('projects/create', ['loggedin' => $this->loggedin, 'user-me' => $this->username]);
+                $this->view('dits/create', ['loggedin' => $this->loggedin, 'user-me' => $this->username]);
             }
         }
         else{
             $this->view('general/error', ['loggedin' => $this->loggedin, 'user-me' => $this->username, 'message' => 'To create new project, you have to <a href="/login">log in</a> first. If you don\'t have account, you can <a href="/signup">sign up</a>.']);
         }
     }
+    */
 }

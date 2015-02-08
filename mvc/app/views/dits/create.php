@@ -20,7 +20,7 @@ function generate_errors($fieldname, $errors){
 }
 
 $page=new PageWithHeader($data['loggedin'], $data['user-me']);
-$page->title('projects::create');
+$page->title('dits::create');
 
 $data['values'] = isset($data['values'])?$data['values']:['projectname' => '', 'url' => '', 'subtitle' => '', 'description' => ''];
 $data['errors'] = isset($data['errors'])?$data['errors']:[];

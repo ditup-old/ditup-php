@@ -86,8 +86,8 @@ class User extends Controller
                     // /user/[username]/messages
 
                     break;
-                case 'projects':
-                    $this->projects($member->name, $user->name);
+                case 'dits':
+                    $this->dits($member->name, $user->name);
                     break;
                 case '':
 		    $static_user_profile = $this->staticModel('UserProfile');
@@ -197,7 +197,7 @@ class User extends Controller
         }
     }
 
-    private function projects($username_member, $username_me){
+    private function dits($username_member, $username_me){
         $static_user_profile = $this->staticModel('UserProfile');
         $projects=$static_user_profile::getProjects($username_member);
         $this->view('people/profile/projects', ['loggedin' => $this->loggedin, 'user-me' => $username_me, 'member' => $username_member, 'projects' => $projects]);       

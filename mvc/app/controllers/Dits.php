@@ -54,7 +54,7 @@ class Dits extends Controller
                     $errors = [];
                     $create_project = $this->model('CreateProject');
                     if(!$create_project->create($project_data, $errors)){
-                        $this->view('projects/create', [
+                        $this->view('dits/create', [
                             'loggedin' => $this->loggedin,
                             'user-me' => $this->username,
                             'values' => $project_data,
@@ -76,7 +76,7 @@ class Dits extends Controller
 
             }
             else{
-                $this->view('projects/create', ['loggedin' => $this->loggedin, 'user-me' => $this->username]);
+                $this->view('dits/create', ['loggedin' => $this->loggedin, 'user-me' => $this->username]);
             }
         }
         else{
