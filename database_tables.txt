@@ -4,19 +4,23 @@
   `cookie_code` char(32) DEFAULT NULL,
   `salt` char(64) DEFAULT NULL,
   `iterations` int(10) unsigned DEFAULT NULL,
-  `login_time` bigint(12) DEFAULT NULL,
-  `refresh_time` bigint(12) DEFAULT NULL,
+  `login_time` bigint(12) unsigned DEFAULT NULL,
+  `refresh_time` bigint(12) unsigned DEFAULT NULL,
   KEY `FK_user_id` (`user_id`),
   CONSTRAINT `cookie_login_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user_accounts` (`user_id`)
 ) ENGINE=InnoDB
 
 ***CREATE TABLE `messages` (
   `message_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `from_user_id` int(10) unsigned DEFAULT NULL,
+  `from_project_id` int(10) unsigned DEFAULT NULL,
   `message` varchar(10000) DEFAULT NULL,
-  `send_time` bigint(12) DEFAULT NULL,
-  `read_time` bigint(12) DEFAULT NULL,
+  `send_time` bigint(12) unsigned DEFAULT NULL,
+  `create_time` bigint(12) unsigned DEFAULT NULL,
+  `subject` varchar(512) DEFAULT NULL,
+  `reply_to_message_id` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`message_id`)
-) ENGINE=InnoDB
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
 
 ***CREATE TABLE `message_from_user` (
   `message_id` int(10) unsigned,
@@ -38,6 +42,13 @@
   `project_id` int(10) unsigned
 ) ENGINE=InnoDB
 
+***CREATE TABLE `message_status` (
+  `message_id` int(10) unsigned DEFAULT NULL,
+  `to_user_id` int(10) unsigned DEFAULT NULL,
+  `read_time` bigint(12) unsigned DEFAULT NULL,
+  `delete_time` bigint(12) unsigned DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
+
 ***CREATE TABLE `project_tag` (
   `project_id` int(10) unsigned DEFAULT NULL,
   `tag_id` int(10) unsigned DEFAULT NULL
@@ -52,7 +63,7 @@
   `user_id` int(10) unsigned NOT NULL,
   `project_id` int(10) unsigned NOT NULL,
   `relationship` enum('admin','member','follower','await-member') DEFAULT NULL,
-  `joined` bigint(12) DEFAULT NULL
+  `joined` bigint(12) unsigned DEFAULT NULL
 ) ENGINE=InnoDB
 
 ***CREATE TABLE `projects` (
@@ -62,7 +73,7 @@
   `subtitle` varchar(256) DEFAULT NULL,
   `visibility` enum('all','logged','members') DEFAULT NULL,
   `description` text,
-  `created` bigint(12) DEFAULT NULL,
+  `created` bigint(12) unsigned DEFAULT NULL,
   PRIMARY KEY (`project_id`)
 ) ENGINE=InnoDB
 
@@ -72,7 +83,7 @@ CREATE TABLE `subscription` (
   `verified` tinyint(1) DEFAULT '0',
   `verify_code` char(32) DEFAULT NULL,
   `delete_code` char(32) DEFAULT NULL,
-  `timestamp` bigint(12) DEFAULT NULL,
+  `timestamp` bigint(12) unsigned DEFAULT NULL,
   PRIMARY KEY (`subscriber_id`)
 ) ENGINE=InnoDB
 
@@ -81,7 +92,7 @@ CREATE TABLE `subscription` (
   `tag_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `description` varchar(1024) DEFAULT NULL,
   `type` enum('suggested','active') DEFAULT NULL,
-  `created` bigint(12) DEFAULT NULL,
+  `created` bigint(12) unsigned DEFAULT NULL,
   PRIMARY KEY (`tag_id`)
 ) ENGINE=InnoDB
 
@@ -94,9 +105,9 @@ CREATE TABLE `subscription` (
   `email` varchar(320) DEFAULT NULL,
   `verified` tinyint(1) DEFAULT '0',
   `verify_code` char(32) DEFAULT NULL,
-  `code_created` bigint(12) DEFAULT NULL,
+  `code_created` bigint(12) unsigned DEFAULT NULL,
   `delete_code` char(32) DEFAULT NULL,
-  `account_created` bigint(12) DEFAULT NULL,
+  `account_created` bigint(12) unsigned DEFAULT NULL,
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB
 
