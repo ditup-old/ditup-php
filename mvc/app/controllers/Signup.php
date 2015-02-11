@@ -7,8 +7,23 @@ use Mrkvon\Ditup\Core\Controller as Controller;
 class Signup extends Controller
 {
     public static function route($url){
-        $self = new self;
-        $self->index();
+        //print_r($url);
+        if(isset($url[0])){
+            if($url[0]==='verify' && isset($url[1],$url[2])){
+                $self = new self;
+                $self->verify($url[1],$url[2]);
+            }
+            else{
+                require_once '../app/controllers/404.php';
+                $error_class = 'Mrkvon\Ditup\Controller\Fof';
+                $error_class::route();
+                exit();
+            }
+        }
+        else{
+            $self = new self;
+            $self->index();
+        }
     }
 
     public function index()

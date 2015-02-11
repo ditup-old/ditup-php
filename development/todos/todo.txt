@@ -35,3 +35,5 @@ fix all foreign keys in database p:database U:3 I:3 T:1H S:2015-02-08
 add some indexes to database ; p:database U:3 I:3 T:1H S:2015-02-08
 design adding friends p:User U:3 I:3 T:1H S:2015-02-08
 https p:Ditup U:3 I:3 T:1H S:2015-02-08
+fix verifying rooting bug U:5 I:5 C:100 T:1H S:2015-02-11 E:2015-02-11
+implement resending verification link p:Signup U:4 I:4 T:1H S:2015-02-11
