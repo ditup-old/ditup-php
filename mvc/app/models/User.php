@@ -37,7 +37,7 @@ class User
 
     public function readSettings($username){
         return [
-            'visibility' => 'everybody',
+            'visibility' => 'loggedin',
             'searchability' => 'nobody',
         ];
     }

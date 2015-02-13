@@ -234,7 +234,7 @@ class User extends Controller
             else{
                 $this->view('people/edit-settings', [
                     'loggedin' => $loggedin,
-                    'user' => $username_me,
+                    'user-me' => $username_me,
                     'member' => $username_member,
                     'settings' => $settings,
                     'errors' => []

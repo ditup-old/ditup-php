@@ -1,6 +1,10 @@
 <?php
 
 require_once '../app/views/general/PageWithHeader.php';
+require_once '../app/core/Settings.php';
+
+$settings=Mrkvon\Ditup\Core\Settings::USER['settings'];
+//print_r($settings);
 
 function generate_errors($fieldname, $errors){
     if(is_array($errors) && isset($errors[$fieldname])){
@@ -25,7 +29,7 @@ $errors = isset($data['errors']) ? $data['errors'] : [];
 $page=new PageWithHeader($data['loggedin'], $data['user-me']);
 $page->title('profile::' . $data['member'] . '::edit');
 
-$page->add(print_r($data,true).'<div>change settings of user <a href="/user/'.$data['member'].'">' . $data['member'] . '</a></div>
+$content=print_r($data,true).'<div>change settings of user <a href="/user/'.$data['member'].'">' . $data['member'] . '</a></div>
 <form method="post" action="">
 <table>
 <tbody>
@@ -34,10 +38,11 @@ $page->add(print_r($data,true).'<div>change settings of user <a href="/user/'.$d
         <th>visibility</th>
         <td>
             <select name="visibility">
-                <option ' . ($data['settings']['visibility']=='everybody'  ? 'selected="selected"' : '') . ' value="everybody" >everybody</option>
-                <option ' . ($data['settings']['visibility']=='logged'  ? 'selected="selected"' : '') . ' value="" ></option>
-                <option ' . ($data['settings']['visibility']=='nobody'  ? 'selected="selected"' : '') . ' value="nobody" >nobody</option>
-            </select>
+';
+foreach($settings['visibility'] as $value=>$name){
+    $content.='                <option ' . ($data['settings']['visibility']==$value  ? 'selected="selected"' : '') . ' value="'.$value.'" >'.$name."</option>\n";
+}
+$content.='            </select>
         </td>
         <td>' . generate_errors('visibility', $errors) . '</td>
     </tr>
@@ -45,10 +50,11 @@ $page->add(print_r($data,true).'<div>change settings of user <a href="/user/'.$d
         <th>searchability</th>
         <td>
             <select name="searchability">
-                <option ' . ($data['settings']['searchability']=='everybody' ? 'selected="selected"' : '') . ' value="everybody" >everybody</option>
-                <option ' . ($data['settings']['searchability']=='' ? 'selected="selected"' : '') . ' value="" ></option>
-                <option ' . ($data['settings']['searchability']=='nobody' ? 'selected="selected"' : '') . ' value="nobody" >nobody</option>
-            </select>
+';
+foreach($settings['searchability'] as $value=>$name){
+    $content.='                <option ' . ($data['settings']['searchability']==$value  ? 'selected="selected"' : '') . ' value="'.$value.'" >'.$name."</option>\n";
+}
+$content.='            </select>
         </td>
         <td>' . generate_errors('searchability', $errors) . '</td>
     </tr>
@@ -60,7 +66,7 @@ $page->add(print_r($data,true).'<div>change settings of user <a href="/user/'.$d
 </tbody>
 </table>
 </form>
-');
-
+';
+$page->add($content);
 echo $page->generate();
 
