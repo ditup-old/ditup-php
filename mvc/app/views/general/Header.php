@@ -46,6 +46,7 @@ class Header
         <li>me
             <ul>
                 <li><a href="/user/' . $this->user . '">my profile</a></li>
+                <li><a href="/user/' . $this->user . '/settings">settings</a></li>
                 <li><a href="/messages" >messages</a></li>
                 <li><a href="/user/' . $this->user . '/dits">my dits</a></li>
                 <li>...</li>

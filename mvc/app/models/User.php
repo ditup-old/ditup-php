@@ -28,6 +28,20 @@ class User
         $this->username=$username;
     }
 
+    public function saveSettings($username, $settings, &$errors = []){
+        $errors=[
+            'save' => 'saving to database is not implemented'
+        ];
+        return false;
+    }
+
+    public function readSettings($username){
+        return [
+            'visibility' => 'everybody',
+            'searchability' => 'nobody',
+        ];
+    }
+
     public function login($values, &$errors = null){
         if(isset($values, $values['username'], $values['password'])){
             

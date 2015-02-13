@@ -264,7 +264,7 @@ class CreateProject extends Project
 
     private static function validateSubtitle($subtitle, &$errors=[]) {
         $ret=true;
-        if(!strlen($subtitle) <= self::SUBTITLE_LENGTH){
+        if(strlen($subtitle) > self::SUBTITLE_LENGTH){
             $ret=false;
             $errors[]=self::SUBTITLE_LENGTH_ERROR;
         }

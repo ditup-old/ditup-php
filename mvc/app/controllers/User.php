@@ -89,6 +89,9 @@ class User extends Controller
                 case 'dits':
                     $this->dits($member->name, $user->name);
                     break;
+                case 'settings':
+                    $this->settings($user->name, $member->name, $user_profile, $this->loggedin);
+                    break;
                 case '':
 		    $static_user_profile = $this->staticModel('UserProfile');
 		    $tags = $static_user_profile::getTags($member->name);
@@ -194,6 +197,52 @@ class User extends Controller
         }
         else {
             $this->view('general/error', ['loggedin' => $this->loggedin, 'user-me' => $username_me, 'member' => $username_member, 'message' => 'Sorry, you don\'t have rights to edit profile of user '.$username_member.'.']);
+        }
+    }
+
+    private function settings($username_me, $username_member, $user_profile, $loggedin){
+        if($username_me === $username_member && $loggedin===true){
+            $usr = $this->model('User');
+            $settings = $usr->readSettings($username_member);
+            if(!empty($_POST) && isset($_POST['save'])&&$_POST['save']=='save settings'){
+                /*here data should be entered to database.
+                what data?
+                
+                */
+                $submitted_settings=$_POST;
+                print_r($_POST);
+                $errors=array();
+                if(!$usr->saveSettings($username_member, $submitted_settings, $errors)){
+                    $this->view('people/edit-settings', [
+                        'loggedin' => $this->loggedin,
+                        'user-me' => $username_me,
+                        'member' => $username_member,
+                        'settings' => $settings,
+                        'errors' => $errors
+                    ]);
+                    exit();
+                }
+                else{
+                    $this->view('general/message', [
+                        'loggedin' => $this->loggedin,
+                        'user-me' => $username_me,
+                        'message' => 'settings of '.$username_member.' were successfuly saved',
+                    ]);
+                    exit();
+                }
+            }
+            else{
+                $this->view('people/edit-settings', [
+                    'loggedin' => $loggedin,
+                    'user' => $username_me,
+                    'member' => $username_member,
+                    'settings' => $settings,
+                    'errors' => []
+                ]);
+            }
+        }
+        else {
+            $this->view('general/error', ['loggedin' => $this->loggedin, 'user-me' => $username_me, 'message' => 'Sorry, you don\'t have rights to edit settings of user '.$username_member.'.']);
         }
     }
 
