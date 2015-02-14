@@ -22,7 +22,7 @@ function generate_errors($fieldname, $errors){
 $page=new PageWithHeader($data['loggedin'], $data['user-me']);
 $page->title('dits::create');
 
-$data['values'] = isset($data['values'])?$data['values']:['projectname' => '', 'url' => '', 'subtitle' => '', 'description' => ''];
+$data['values'] = isset($data['values'])?$data['values']:['ditname' => '', 'url' => '', 'subtitle' => '', 'description' => ''];
 $data['errors'] = isset($data['errors'])?$data['errors']:[];
 
 $content='
@@ -31,8 +31,8 @@ $content='
 <table>
     <tr>
         <td>dit name</td>
-        <td><input type="text" name="projectname" value="' . $data['values']['projectname'] . '" /></td>
-        <td>'.generate_errors('projectname', $data['errors']).'</td>
+        <td><input type="text" name="ditname" value="' . $data['values']['ditname'] . '" /></td>
+        <td>'.generate_errors('ditname', $data['errors']).'</td>
     </tr>
     <tr>
         <td>dit type</td>

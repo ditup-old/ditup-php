@@ -39,10 +39,10 @@ class Dits extends Controller
         if user is not logged in, go to /log in first
     *****/
         if($this->loggedin){
-            if(isset($_POST, $_POST['projectname'], $_POST['url'], $_POST['subtitle'], $_POST['description'], $_POST['create'], $_POST['type'])){
+            if(isset($_POST, $_POST['ditname'], $_POST['url'], $_POST['subtitle'], $_POST['description'], $_POST['create'], $_POST['type'])){
                 $project_data=[
                     'creator' => $this->username,
-                    'projectname' => $_POST['projectname'],
+                    'ditname' => $_POST['ditname'],
                     'url' => $_POST['url'],
                     'subtitle' => $_POST['subtitle'],
                     'description' => $_POST['description'],
@@ -62,7 +62,7 @@ class Dits extends Controller
                         ]); 
                     }
                     else{
-                        header('Location:/project/'.$project_data['url'].'/edit');
+                        header('Location:/project/'.$project_data['url']);
                     }
                 }
                 catch(Exception $e){
@@ -70,8 +70,7 @@ class Dits extends Controller
                         'loggedin' => $this->loggedin,
                         'user-me' => $this->username,
                         'message' => print_r($e,true)
-                        ]
-                    );
+                    ]);
                 }
 
             }

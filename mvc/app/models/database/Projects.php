@@ -87,7 +87,7 @@ class Projects extends DbAccess
     }
 
     public static function insertProject(Array $values){
-        if(isset($values, $values['projectname'], $values['url'], $values['subtitle'], $values['description'], $values['creator'])){
+        if(isset($values, $values['ditname'], $values['url'], $values['subtitle'], $values['description'], $values['creator'])){
             $pdo = new PDO('mysql:host='.Login\HOSTNAME.';dbname='. Login\DATABASE .';charset=utf8', Login\USERNAME, Login\PASSWORD);
         
             //****************without these lines it will not catch error and not transaction well. not rollback.********
@@ -100,7 +100,7 @@ class Projects extends DbAccess
             {
                 // Prepare the statements
                 $statement=$pdo->prepare('INSERT INTO projects (projectname, url, subtitle, description, created, type) VALUES (:pn, :ur, :st, :de, UNIX_TIMESTAMP(), :type)');
-                $statement->bindValue(':pn' ,strval($values['projectname']), PDO::PARAM_STR);
+                $statement->bindValue(':pn' ,strval($values['ditname']), PDO::PARAM_STR);
                 $statement->bindValue(':ur' ,strval($values['url']), PDO::PARAM_STR);
                 $statement->bindValue(':st' ,strval($values['subtitle']), PDO::PARAM_STR);
                 $statement->bindValue(':de' ,strval($values['description']), PDO::PARAM_STR);
@@ -131,7 +131,7 @@ class Projects extends DbAccess
             unset($pdo);
         }
         else{
-            if(!isset($values)) throw new Exception ('Users::updateVerifyCode Error: array of values must be provided!');
+            if(!isset($values)) throw new Exception ('Dits Error: array of values must be provided!');
             elseif(!isset($values['username'])) throw new Exception ('Users::updateVerifyCode Error: username must be provided!');
             elseif(!isset($values['email'])) throw new Exception ('Users::updateVerifyCode Error: email must be provided!');
             elseif(!isset($values['verify_code'])) throw new Exception ('Users::updateVerifyCode Error: verification code must be provided!');
