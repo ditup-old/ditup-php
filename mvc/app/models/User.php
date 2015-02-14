@@ -57,6 +57,7 @@ class User
                 if($this::compareHashes($data[0]['password'], $this::hashPassword($values['password'], $data[0]['salt'], $data[0]['iterations']))){
                     if($data[0]['verified']){
                         $loggedin = true;
+                        self::updateLastLogin($values['username']);
                     }
                     else{
                         $errors ['verified']='logged in but not verified';
@@ -132,6 +133,11 @@ class User
         else{
             throw new Exception('salt is not secure');
         }
+    }
+
+    protected static function updateLastLogin($username){
+        $updated = Database\UserAccounts::updateLastLogin($username);
+        return $updated===true?true:false;
     }
 
     protected static function createHexCode($length = 32, &$is_secure=null){

@@ -24,7 +24,7 @@ class UserInfo
         {
             // Prepare the statements
             //print_r($username);
-            $statement=$pdo->prepare('SELECT ua.username, ui.* FROM user_accounts AS ua INNER JOIN user_info AS ui ON ua.user_id = ui.user_id WHERE ua.username=:un');
+            $statement=$pdo->prepare('SELECT ua.username, ua.account_created, UNIX_TIMESTAMP()-ua.last_login AS last_login, ui.* FROM user_accounts AS ua INNER JOIN user_info AS ui ON ua.user_id = ui.user_id WHERE ua.username=:un');
             $statement->bindValue(':un',strval($username), PDO::PARAM_STR);
             $statement->execute();
             

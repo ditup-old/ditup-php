@@ -51,8 +51,8 @@ $content = '
                     <tr><th></th><td>...</td><td>' . '' . '</td></tr>
                 </tbody>
                 <tbody>
-                    <tr><th>visits</th><td>member since</td><td>' . 'implement!' . '</td></tr>
-                    <tr><th></th><td>last login</td><td>' . 'implement!' . '</td></tr>
+                    <tr><th>visits</th><td>member since</td><td>' . $data['profile']['member-since'] . '</td></tr>
+                    <tr><th></th><td>last login</td><td>' . $data['profile']['last-login'] . '</td></tr>
                 </tbody>
                 <tbody>
                     <tr><th>stats</th><td>profile views</td><td>' . 'implement!' . '</td></tr>

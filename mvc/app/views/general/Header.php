@@ -39,6 +39,7 @@ class Header
             <ul>
                 <li><a href="/wiki">wiki</a></li>
                 <li>support</li>
+                <li><a href="/map">map</a></li>
             </ul>
         </li>
         <li>search <input /></li>' . ($this->loggedin ?

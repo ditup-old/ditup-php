@@ -22,6 +22,7 @@ function route(Array $url){
         'login' => 'Login',
         'logout' => 'Logout',
         'logout-all' => 'LogoutAll',
+        'map' => 'Map',
         'message' => 'Message',
         'messages' => 'Messages',
         'people' => 'People',

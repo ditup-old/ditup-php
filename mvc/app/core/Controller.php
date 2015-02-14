@@ -23,7 +23,7 @@ class Controller
 
             //print_r($_SESSION);
 	}
-
+//        $_SESSION['loggedin']=false;
         if(!isset($_SESSION['loggedin'],$_SESSION['username'], $_SESSION['from_form']) || $_SESSION['loggedin']!==true)
         {
             /****

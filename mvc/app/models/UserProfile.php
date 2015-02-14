@@ -35,6 +35,10 @@ class UserProfile extends User
         $profile = Database\UserInfo::selectProfile($username);
         if(is_array($profile)){
             $profile['age'] = floor((time() - strtotime($profile['birthday'])) / 31556926);
+            $profile['member-since'] = date('F Y',$profile['account_created']);
+            $profile['last-login'] = self::generateLastLogin($profile['last_login']);
+
+            unset($profile['birthday'], $profile['account_created'], $profile['last_login']);
         }
         
         //FAKE
@@ -56,6 +60,25 @@ class UserProfile extends User
         
 
         return $profile;
+    }
+
+    private static function generateLastLogin($seconds){
+        if($seconds!==null){
+            $seconds*=1;
+            //exit(gettype($seconds));
+            if($seconds<60) return $seconds.($seconds   ==1?' second ago'   :' seconds ago');
+            $minutes=floor($seconds/60);
+            if($minutes<60) return $minutes.($minutes   ==1?' minute ago'   :' minutes ago');
+            $hours=floor($minutes/60);
+            if($hours<24)   return $hours.  ($hours     ==1?' hour ago'     :' hours ago');
+            $days=floor($hours/24);
+            if($days<30)    return $days.   ($days      ==1?' day ago'      :' days ago');
+            $months=floor($days/30);
+            $years=floor($days/365);
+            if($days<365)   return $months. ($months    ==1?' month ago'    :' months ago');
+            return $years.  ($years     ==1?' year ago'     :' years ago');
+        }
+        else return '?';
     }
     
     public function setProfile($data){

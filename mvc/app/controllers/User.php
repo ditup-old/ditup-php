@@ -33,7 +33,7 @@ class User extends Controller
                     $this->edit($user->name, $member->name, $user_profile, $this->loggedin);
                     break;
                 case 'info':
-                    echo 'implement info!! (controllers/user.php)';
+                    echo 'implement info!! (controllers/User.php)';
                     break;
                 case 'change-password':
                     if($member->name === $user->name && $this->loggedin){
