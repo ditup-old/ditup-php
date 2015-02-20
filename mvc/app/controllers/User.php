@@ -124,7 +124,7 @@ class User extends Controller
         }
     }
 
-    private function edit($username_me, $username_member, $user_profile, $loggedin){
+    private function edit($username_me, $username_member, $user_profile_class, $loggedin){
         if($username_me === $username_member && $loggedin){
             //print_r($_POST);
             //echo (isset($_POST)?'post true':'post false');
@@ -135,10 +135,16 @@ class User extends Controller
                 what data?
                 
                 */
+                $data = $user_profile_class->getProfile($username_member);
+                print_r($data);
+                foreach($_POST as $field=>$value){
+                    $data[$field]=$value;
+                }
+
                 $data = $_POST;
                 //print_r($_POST);
                 $errors=array();
-                if($user_profile->validate($data, $errors)){
+                if($user_profile_class->validate($data, $errors)){
                     $data['username'] = $username_member;
                     $data['v_age'] = (isset($data['v_age'])&&$data['v_age']=='on') ? true : false;
                     $data['v_about'] = (isset($data['v_about'])&&$data['v_about']=='on') ? true : false;
@@ -146,7 +152,7 @@ class User extends Controller
                     $data['v_website'] = (isset($data['v_website'])&&$data['v_website']=='on') ? true : false;
                     $data['v_bewelcome'] = (isset($data['v_bewelcome'])&&$data['v_bewelcome']=='on') ? true : false;
                     //print_r($data);
-                    $user_profile->setProfile($data);
+                    $user_profile_class->setProfile($data);
                     
                     header('Location:/user/'.$this->username);
                     exit();
@@ -192,7 +198,7 @@ class User extends Controller
                 exit();
             }
             else{
-                $this->view('people/profile-edit', ['loggedin' => $loggedin, 'user' => $username_me, 'member' => $username_member, 'profile' => $user_profile->getProfile($username_member)]);
+                $this->view('people/profile-edit', ['loggedin' => $loggedin, 'user' => $username_me, 'member' => $username_member, 'profile' => $user_profile_class->getProfile($username_member)]);
             }
         }
         else {

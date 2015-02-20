@@ -5,6 +5,7 @@ use Mrkvon\Ditup\View\Dit\DitPage as DitPage;
 
 $action=$data['action'];
 $values=$data['profile'];
+//print_r($data);
 $page=new DitPage($data['loggedin'], $data['user-me']);
 $page->setProjectname($values['ditname'], $values['url']);
 $page->setMember($data['is_member']);
@@ -58,6 +59,14 @@ switch($action){
         foreach($data['admins'] as $admin){
             $content .= '<li><a href="/user/'.$admin.'">'.$admin.'</a></li>';
         }
+        $content .= '
+    </ul>
+    await-members:
+    <ul>';
+        foreach($data['await-members'] as $awm){
+            $content .= '<li><a href="/user/'.$awm.'">'.$awm.'</a>'.($data['is_admin'] ? ' (<a href="/'.$values['type'].'/'.$values['url'].'/join-request/'.$awm.'">process</a>)' : '').'</li>';
+        }
+        $content.='</ul>';
         break;
     default:
         $page->title('error');

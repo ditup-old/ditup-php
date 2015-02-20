@@ -8,27 +8,14 @@ use Exception;
 require_once dirname(__FILE__).'/database/Projects.php';
 require_once dirname(__FILE__).'/database/ProjectUser.php';
 
-class Project
+class DitUser
 {
-
-    const JOIN_MESSAGE_LENGTH = 2048;
-    const JOIN_MESSAGE_LENGTH_ERROR = 'message can be max 2048 characters long';
-    /*
-        function returns true if project exists in database
-    */
-    public static function exists($url){
-        $project=Database\Projects::selectProjectByUrl($url);
-        return is_array($project);
+    public static function joinQuestion($url){
+        return 'implement retrieving join question for dit '.$url;
     }
 
-    public static function getProjectByUrl($url){
-        $project=Database\Projects::selectProjectByUrl($url);
-        if(is_array($project)){
-            return $project;
-        }
-        else{
-            throw new Exception('profile does not exist');
-        }
+    public static function joinAnswer($url, $username){
+        return 'implement retrieving join answer for dit '.$url.' of user '.$username;
     }
 
     public static function isMember($url, $username){
@@ -77,10 +64,6 @@ class Project
         }
 //        print_r($ret);
         return $ret;
-    }
-
-    public static function getLocation($projectname){
-        return 'implement!!';
     }
 
     public static function getUserMembership($username, $dit_url){

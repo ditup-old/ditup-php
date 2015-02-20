@@ -256,7 +256,7 @@ class Projects extends DbAccess
      * getPeople. input = url of project, output = array of people who are related to the project [[username, relation, ?time],[username, relation, ?time],[]]
      *
      */
-    public static function getPeople($url){
+    public static function getPeople($url, $flag='ALL'){
         $pdo = new PDO('mysql:host='.Login\HOSTNAME.';dbname='. Login\DATABASE .';charset=utf8', Login\USERNAME, Login\PASSWORD);
     
         //****************without these lines it will not catch error and not transaction well. not rollback.********
@@ -276,41 +276,40 @@ class Projects extends DbAccess
             
             *******/
             // Prepare the statements
-            $statement = $pdo->prepare('SELECT project_id FROM projects WHERE url=:url');
+
+            if ($flag==='ALL'){
+                $flag_query='TRUE';
+            }
+            elseif($flag==='AWAIT_MEMBERS'){
+                $flag_query='pu.relationship=\'await-member\'';
+            }
+            else{
+                $flag_query='FALSE';
+            }
+
+            //print_r($flag_query);
+
+            $statement = $pdo->prepare('SELECT ua.username AS username, pu.relationship AS relationship FROM project_user AS pu
+            INNER JOIN user_accounts AS ua ON ua.user_id=pu.user_id
+                WHERE pu.project_id IN
+                    (SELECT project_id FROM projects WHERE url=:url)
+                AND '.$flag_query);
             $statement->bindValue(':url',strval($url), PDO::PARAM_STR);
             $statement->execute();
-                
+            
             $rows = $statement->fetchAll(PDO::FETCH_ASSOC);
-            $project_id = isset($rows[0], $rows[0]['project_id'])?$rows[0]['project_id']:false;
-            if($project_id!==false){
-                $statement = $pdo->prepare('SELECT user_id, relationship FROM project_user WHERE project_id=:pid');
-                $statement->bindValue(':pid',strval($project_id), PDO::PARAM_STR);
-                $statement->execute();
-                
-                $rows = $statement->fetchAll(PDO::FETCH_ASSOC);
-
-                foreach($rows as $row){
-                    $statement = $pdo->prepare('SELECT username FROM user_accounts WHERE (user_id=:uid)');
-                    $statement->bindValue(':uid',strval($row['user_id']), PDO::PARAM_STR);
-                    $statement->execute();
-                    $output = $statement->fetchAll(PDO::FETCH_ASSOC);
-                    if(isset($output[0])){
-                        $ret[]=['username'=>$output[0]['username'], 'relationship'=>$row['relationship']];
-                    }
-                    unset($output);
-                }
-                unset($rows);
-            }
+            
             $pdo->commit();
+            unset($pdo);
+            return $rows;
         }
         catch(PDOException $e)
         {
             $pdo->rollBack();
+            unset($pdo);
             throw new Exception('database problem: ' . $e);
             // Report errors
         }
-        unset($pdo);
-        return $ret;
     }
 
     private static function newPDO(){

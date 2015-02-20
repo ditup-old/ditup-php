@@ -38,7 +38,7 @@ class UserProfile extends User
             $profile['member-since'] = date('F Y',$profile['account_created']);
             $profile['last-login'] = self::generateLastLogin($profile['last_login']);
 
-            unset($profile['birthday'], $profile['account_created'], $profile['last_login']);
+            unset($profile['account_created'], $profile['last_login']);
         }
         
         //FAKE
