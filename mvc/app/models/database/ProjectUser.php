@@ -42,6 +42,104 @@ class ProjectUser
         unset($pdo);
     }
 
+    public static function updateAwaitMemberToMember($username, $url){
+        $pdo = self::newPDO();
+
+        // Start the transaction. PDO turns autocommit mode off depending on the driver, you don't need to implicitly say you want it off
+        $pdo->beginTransaction();
+        // 
+        try
+        {
+            // Prepare the statements
+            $statement = $pdo->prepare('UPDATE project_user SET relationship=\'member\'
+                WHERE user_id IN (SELECT user_id FROM user_accounts WHERE username=:un)
+                AND project_id IN (SELECT project_id FROM projects WHERE url=:url)
+                AND relationship=\'await-member\'');
+            $statement->bindValue(':un',strval($username), PDO::PARAM_STR);
+            $statement->bindValue(':url',strval($url), PDO::PARAM_STR);
+            $statement->execute();
+            
+            $updated = $statement->rowCount();
+            unset($statement);
+
+            if($updated===1){
+                //all ok
+                $pdo->commit();
+                return true;
+                unset($pdo);
+            }
+            elseif($updated===0){
+                $pdo->commit();
+                return false;
+                unset($pdo);
+            }
+            else{
+                $pdo->rollBack();
+                throw new Exception('weird database problem... more than 1 row affected! duplicate in database!');
+            }
+            
+            $pdo->commit();
+            unset($pdo);
+            return $rels;
+        }
+        catch(PDOException $e)
+        {
+            $pdo->rollBack();
+            throw new Exception('database problem: ' . $e);
+            // Report errors
+        }
+        unset($pdo);
+    }
+
+    public static function deleteAwaitMember($username, $url){
+        $pdo = self::newPDO();
+
+        // Start the transaction. PDO turns autocommit mode off depending on the driver, you don't need to implicitly say you want it off
+        $pdo->beginTransaction();
+        // 
+        try
+        {
+            // Prepare the statements
+            $statement = $pdo->prepare('DELETE FROM project_user
+                WHERE user_id IN (SELECT user_id FROM user_accounts WHERE username=:un)
+                AND project_id IN (SELECT project_id FROM projects WHERE url=:url)
+                AND relationship=\'await-member\'');
+            $statement->bindValue(':un',strval($username), PDO::PARAM_STR);
+            $statement->bindValue(':url',strval($url), PDO::PARAM_STR);
+            $statement->execute();
+            
+            $affected = $statement->rowCount();
+            unset($statement);
+
+            if($affected===1){
+                //all ok
+                $pdo->commit();
+                return true;
+                unset($pdo);
+            }
+            elseif($affected===0){
+                $pdo->commit();
+                return false;
+                unset($pdo);
+            }
+            else{
+                $pdo->rollBack();
+                throw new Exception('weird database problem... more than 1 row affected! duplicate in database!');
+            }
+            
+            $pdo->commit();
+            unset($pdo);
+            return $rels;
+        }
+        catch(PDOException $e)
+        {
+            $pdo->rollBack();
+            throw new Exception('database problem: ' . $e);
+          // Report errors
+        }
+        unset($pdo);
+    }
+
     public static function selectDitRelationshipByUsername($username, $dit_url){
         $pdo = self::newPDO();
 
@@ -106,6 +204,46 @@ class ProjectUser
             $pdo->commit();
             unset($pdo);
             return true;
+        }
+        catch(PDOException $e)
+        {
+            $pdo->rollBack();
+            unset($pdo);
+            $error=print_r($e, false);
+            return false;
+            //throw new Exception('database problem: ' . $e);
+        }
+        unset($pdo);
+        return false;
+    }
+
+    public static function selectJoinMessage($url, $username){
+        /**
+         * 
+         *
+         */
+        $pdo = self::newPDO();
+        // Start the transaction. PDO turns autocommit mode off depending on the driver, you don't need to implicitly say you want it off
+        $pdo->beginTransaction();
+        // 
+        try
+        {
+            // Prepare the statements
+            $statement = $pdo->prepare('SELECT join_message FROM project_user
+                WHERE user_id IN (SELECT user_id FROM user_accounts WHERE username=:uname)
+                AND project_id IN (SELECT project_id FROM projects WHERE url=:url)
+                AND relationship=\'await-member\'');
+            $statement->bindValue(':uname',strval($username), PDO::PARAM_STR);
+            $statement->bindValue(':url',strval($url), PDO::PARAM_STR);
+            $statement->execute();
+            
+            $data = $statement->fetchAll(PDO::FETCH_ASSOC);
+            $msg = (!empty($data)>0 && isset($data[0]['join_message'])) ? $data[0]['join_message'] : null;
+            unset($statement);
+
+            $pdo->commit();
+            unset($pdo);
+            return $msg;
         }
         catch(PDOException $e)
         {

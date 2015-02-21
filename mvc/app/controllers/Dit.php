@@ -260,30 +260,99 @@ class Dit extends Controller
         if($user_class::exists($awaiting)){
 //            echo $awaiting.' '.$url[1];
             if($dit_class::isAwaiting($awaiting, $url)){
-                if(isset($all_url[4])){
-                    if($all_url[4]==='accept'){
-                        exit('accept');
-                    }
-                    elseif($all_url[4]==='decline'){
-                        exit('decline');
-                    }
-                    else exit('404');
-                }
+
                 $dit_usr_class=self::staticModel('DitUser');
                 $question=$dit_usr_class::joinQuestion($url);
                 $answer=$dit_usr_class::joinAnswer($url, $awaiting);
-                $this->view('dits/show-join-request',[
-                    'loggedin' => $this->loggedin,
-                    'user-me'=> $this->username,
-                    'dit' => [
-                        'type' => $dit_type,
-                        'name' => 'add dit name',
-                        'url' => $url
-                    ],
-                    'awaiting-user' => $awaiting,
-                    'question' => $question,
-                    'answer' => $answer
-                ]);
+
+                if(isset($all_url[4])){
+                    if($all_url[4]==='accept'){
+                    //    exit('accept');
+                        if(isset($_POST, $_POST['accept'], $_POST['message'])){
+                            //put member to database...
+                            if($dit_usr_class::acceptUserToDit($awaiting, $url)){
+                                //send new member a welcoming message;
+                                $messages_class=self::staticModel('Messages');
+                                $messages_class::sendMessage([
+                                    'from-project' => $url,
+                                    'from-user' => $this->username,
+                                    'to-users' => [$awaiting],
+                                    'to-projects' => [],
+                                    'subject' => 'you are now member of '.$dit_type.' '.$url,
+                                    'message' => $_POST['message']
+                                ]);
+                                exit('user was accepted');
+                            }
+                        }
+                        elseif(isset($_POST, $_POST['cancel'])){
+                            exit('cancel accepting... back to some previous page');
+                        }
+                        else{
+                            $this->view('dits/accept-user-form',[
+                                'loggedin'=>$this->loggedin,
+                                'user-me'=>$this->username,
+                                'dit' => [
+                                    'type' => $dit_type,
+                                    'name' => 'add dit name',
+                                    'url' => $url
+                                ],
+                                'awaiting-user' => $awaiting
+                            ]);
+                            exit();
+                        }
+                    }
+                    elseif($all_url[4]==='decline'){
+                        if(isset($_POST, $_POST['decline'], $_POST['message'])){
+                            //put member to database...
+                            if($dit_usr_class::declineUserToDit($awaiting, $url)){
+                                //send explanation message why not accepted;
+                                $messages_class=self::staticModel('Messages');
+                                $messages_class::sendMessage([
+                                    'from-project' => $url,
+                                    'from-user' => $this->username,
+                                    'to-users' => [$awaiting],
+                                    'to-projects' => [],
+                                    'subject' => 'you were not accepted to '.$dit_type.' '.$url,
+                                    'message' => $_POST['message']
+                                ]);
+                                exit('user was declined');
+                            }
+                        }
+                        elseif(isset($_POST, $_POST['cancel'])){
+                            exit('cancel declining... back to some previous page');
+                        }
+                        else{
+                            $this->view('dits/decline-user-form',[
+                                'loggedin'=>$this->loggedin,
+                                'user-me'=>$this->username,
+                                'dit' => [
+                                    'type' => $dit_type,
+                                    'name' => 'add dit name',
+                                    'url' => $url
+                                ],
+                                'awaiting-user' => $awaiting
+                            ]);
+                            exit();
+                        }
+                        //exit('decline');
+                    }
+                    else exit('404');
+                }
+                else{
+                    $this->view('dits/show-join-request',[
+                        'loggedin' => $this->loggedin,
+                        'user-me'=> $this->username,
+                        'dit' => [
+                            'type' => $dit_type,
+                            'name' => 'add dit name',
+                            'url' => $url
+                        ],
+                        'awaiting-user' => $awaiting,
+                        'question' => $question,
+                        'answer' => $answer
+                    ]);
+                    exit();
+                }
             }
             else exit($awaiting.' user is not awaiting.');
         }

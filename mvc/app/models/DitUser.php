@@ -15,7 +15,10 @@ class DitUser
     }
 
     public static function joinAnswer($url, $username){
-        return 'implement retrieving join answer for dit '.$url.' of user '.$username;
+	$answer=Database\ProjectUser::selectJoinMessage($url, $username);
+	if($answer===false) return 'database error';
+	$default_answer='default: user '.$username.' didn\'t write anything or doesn\'t want to join';
+        return $answer!==null ? $answer : $default_answer;
     }
 
     public static function isMember($url, $username){
@@ -85,6 +88,16 @@ class DitUser
             return $send_result===true ? true : false;
         }
         else return false;
+    }
+    
+    public static function acceptUserToDit($username, $url){
+        $accept_result=Database\ProjectUser::updateAwaitMemberToMember($username, $url);
+        return $accept_result === true ? true : false;
+    }
+
+    public static function declineUserToDit($username, $url){
+        $decline_result=Database\ProjectUser::deleteAwaitMember($username, $url);
+        return $decline_result === true ? true : false;
     }
 
     private static function validateJoinRequest($form_data, &$errors){
