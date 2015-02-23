@@ -5,7 +5,7 @@ class Page{
     /**head is basic data necessary for creating page head*/
     /**title:page title, css: array of stylesheets*/
     protected $root_path='/';
-    protected $head=array('title'=>'','css'=>['/css/reset.css']);
+    protected $head=array('title'=>'','css'=>['/css/reset.css', '/fonts/font-awesome-4.3.0/css/font-awesome.min.css']);
     protected $body='';
     /**scripts are [{link:"",properties{name:value}}] **/
     protected $js=array();

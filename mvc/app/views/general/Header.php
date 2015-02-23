@@ -53,7 +53,7 @@ class Header
         </li>
         <li>search <input /></li>' . ($this->loggedin ?
         '
-        <li><div><a href="/user/'.$this->user.' "><img src="'.$profile_picture.'" style="height:30px;" />'.$this->user.'</a> <a href="/notifications">notifications (#)</a> <a href="/messages/received" >messages'
+        <li><div><a href="/user/'.$this->user.' "><img src="'.$profile_picture.'" style="height:30px;" />'.$this->user.'</a> <a href="/notifications"><span class="fa fa-bell-o" ></span> (#)</a> <a href="/messages/received" ><span class="fa fa-envelope-o" ></span>'
         .(
             $this->profile['unseen-messages']===0
             ?
