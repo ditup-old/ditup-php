@@ -109,14 +109,9 @@ class Projects extends DbAccess
                 $project_id = $pdo->lastInsertId();
                 unset($statement);
 
-                $statement=$pdo->prepare('SELECT user_id FROM user_accounts WHERE username = :un');
+                $statement=$pdo->prepare('INSERT INTO project_user (user_id, project_id, relationship, joined)
+                    SELECT ua.user_id, :pi, \'admin\', UNIX_TIMESTAMP() FROM user_accounts ua WHERE username=:un');
                 $statement->bindValue(':un' ,strval($values['creator']), PDO::PARAM_STR);
-                $statement->execute();
-                $rows = $statement->fetchAll(PDO::FETCH_ASSOC);
-                unset($statement);
-
-                $statement=$pdo->prepare('INSERT INTO project_user (user_id, project_id, relationship) VALUES (:ui, :pi, \'admin\')');
-                $statement->bindValue(':ui', strval($rows[0]['user_id']), PDO::PARAM_STR);
                 $statement->bindValue(':pi', strval($project_id), PDO::PARAM_STR);
                 $statement->execute();
       //

@@ -272,4 +272,53 @@ class UserAccounts extends DbAccess
             exit();
         }
     }
+
+    public static function updateVisitReceivedMessages($username){
+    /**
+     * this function will update time of last visit of received messages to now.
+     * used to show how many unread, not seen messages user has since last visit of received messages
+     */
+        require_once dirname(__FILE__).'/db-login.php';
+        $pdo = new PDO('mysql:host='.Login\HOSTNAME.';dbname='. Login\DATABASE .';charset=utf8', Login\USERNAME, Login\PASSWORD);
+    
+    //****************without these lines it will not catch error and not transaction well. not rollback.********
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+        // Start the transaction. PDO turns autocommit mode off depending on the driver, you don't need to implicitly say you want it off
+        $pdo->beginTransaction();
+        // 
+        try
+        {
+            // Prepare the statements
+            $statement=$pdo->prepare('UPDATE user_accounts SET visit_received_messages=UNIX_TIMESTAMP() WHERE username=:un');
+            $statement->bindValue(':un',strval($username), PDO::PARAM_STR);
+            $statement->execute();
+            
+            $rows = $statement->rowCount();
+            unset($statement);
+            if($rows===1){
+                $pdo->commit();
+                unset($pdo);
+                return true;
+            }
+            else{
+                $pdo->rollBack();
+                unset($pdo);
+                return false;
+            }
+
+
+        }
+        catch(PDOException $e)
+        {
+          $pdo->rollBack();
+      
+          echo print_r($e,true);
+          return false;
+
+          // Report errors
+        }
+        unset($pdo);
+
+    }
 }

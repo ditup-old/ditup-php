@@ -20,7 +20,7 @@ function generate_errors($fieldname, $errors){
     else return '';
 }
 
-$page = new Page($data['loggedin'], $data['user-me']);
+$page = new Page($data['loggedin'], $this->profile);
 //print_r($data);
 
 

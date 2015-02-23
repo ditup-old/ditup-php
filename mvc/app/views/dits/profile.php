@@ -6,7 +6,7 @@ use Mrkvon\Ditup\View\Dit\DitPage as DitPage;
 $action=$data['action'];
 $values=$data['profile'];
 //print_r($data);
-$page=new DitPage($data['loggedin'], $data['user-me']);
+$page=new DitPage($data['loggedin'], $this->profile);
 $page->setProjectname($values['ditname'], $values['url']);
 $page->setMember($data['is_member']);
 $page->setAdmin($data['is_admin']);

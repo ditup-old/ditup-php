@@ -3,7 +3,7 @@
 require_once '../app/views/general/PageWithHeader.php';
 use \PageWithHeader as Page;
 
-$page = new Page($data['loggedin'], $data['user-me']);
+$page = new Page($data['loggedin'], $this->profile);
 function generate_errors($fieldname, $errors){
     if(isset($errors[$fieldname])){
         $ret = '';

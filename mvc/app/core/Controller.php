@@ -49,6 +49,7 @@ class Controller
         $this->loggedin = $_SESSION['loggedin'];
         $this->username = $_SESSION['username'];
         $this->from_form = $_SESSION['from_form'];
+        
     }
     
     protected function model($model)
@@ -66,7 +67,18 @@ class Controller
     
     protected function view($view, $data = [])
     {
-        require_once '../app/views/' . $view . '.php';
-    }
+        /**get number of unseen messages (for top notification place)
+        and generate $this->profile;
+        **/
+        $this->profile=[];
+        if($this->loggedin===true){
+            $messages_sm = self::staticModel('Messages');
+            $unseen_messages = $messages_sm::countUnseenMessages($this->username);
+            $this->profile['username'] = $this->username;
+            $this->profile['unseen-messages'] = $unseen_messages;
+        }
 
+        require_once '../app/views/' . $view . '.php';
+        exit();
+    }
 }

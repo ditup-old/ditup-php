@@ -34,7 +34,7 @@ $message = isset($data['message']) ? $data['message'] : [
 print_r($message);
 
 
-$page=new PageWithHeader($data['loggedin'], $data['user-me']);
+$page=new PageWithHeader($data['loggedin'], $this->profile);
 $page->title('messages::compose');
 $content = '
     <div>

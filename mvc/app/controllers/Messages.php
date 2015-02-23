@@ -189,6 +189,10 @@ class Messages extends Controller
             $message_model = $this->staticModel('Messages');
             $messages = $message_model::getReceivedMessages($this->username);
 
+            //********visiting received messages
+            $message_model::visitReceived($this->username);
+//            print_r($messages);
+
             $this->view('messages/show-received', [
                 'loggedin' => $this->loggedin,
                 'user-me' => $this->username,

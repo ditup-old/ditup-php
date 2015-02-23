@@ -22,6 +22,7 @@ class Messages{
     rightToRead($username, $create_time, $request_username);
     selectMessage($username, $create_time, $request_username);
     deleteMessage($username, $create_time);
+    countUnseenMessages($username);
     ******/
 
     public static function selectMessagesOfProject($url, $flag){
@@ -399,16 +400,18 @@ class Messages{
             // Prepare the statements
             $statement=$pdo->prepare('SELECT ua.username AS from_username, pr.projectname AS from_projectname, pr.url AS from_url, msg.message_id, msg.subject, msg.message, msg.send_time, msg.create_time, mst.read_time AS read_time FROM messages AS msg
                 LEFT JOIN user_accounts AS ua ON msg.from_user_id=ua.user_id
-                LEFT JOIN projects AS pr ON pr.project_id=msg.from_project_id'
-                .' LEFT JOIN message_status AS mst ON msg.message_id=mst.message_id
-                WHERE msg.message_id=:mid'
-                //.' AND mst.to_user_id IN'
-                //.' (SELECT user_id FROM user_accounts WHERE username=:run)'
-                //.' AND mst.to_user_id IS NOT NULL'
+                LEFT JOIN projects AS pr ON pr.project_id=msg.from_project_id
+                LEFT JOIN message_status AS mst ON msg.message_id=mst.message_id
+                WHERE msg.message_id=:mid
+                AND (
+                    mst.to_user_id IN
+                        (SELECT user_id FROM user_accounts WHERE username=:run)
+                    OR mst.to_user_id IS NULL
+                )'
                 //.' AND mst.delete_time IS NULL'
             );
             $statement->bindValue(':mid',strval($message_id), PDO::PARAM_STR);
-            //$statement->bindValue(':run',strval($request_username), PDO::PARAM_STR);
+            $statement->bindValue(':run',strval($request_username), PDO::PARAM_STR);
             $statement->execute();
             
             $rows = $statement->fetchAll(PDO::FETCH_ASSOC);
@@ -747,6 +750,50 @@ class Messages{
             $pdo->commit();
             unset ($pdo);
             return $deleted_num > 0 ? true : false;
+        }
+        catch(PDOException $e)
+        {
+            $pdo->rollBack();
+      
+            $outcome=htmlentities(print_r($e,true));
+            echo $outcome;
+            // Report errors
+            unset($pdo);
+            return false;
+        }
+    }
+
+    public static function countUnseenMessages($username){
+        /**
+         * return number of messages which were not yet seen by user $username
+         *
+         */
+
+        $pdo=self::newPDO();
+        $pdo->beginTransaction();
+
+        try
+        {
+            $statement=$pdo->prepare('SELECT COUNT(ms.message_id) no FROM message_status ms
+            INNER JOIN user_accounts ua ON ua.user_id=ms.to_user_id
+            INNER JOIN messages msg ON msg.message_id=ms.message_id
+            WHERE ua.username=:un AND msg.send_time>=ua.visit_received_messages AND ms.read_time IS NULL');
+            $statement->bindValue(':un',strval($username), PDO::PARAM_STR);
+            $statement->execute();
+            
+            $output = $statement->fetchAll(PDO::FETCH_ASSOC);
+            unset($statement);
+            if(sizeof($output)===1){
+                $no=(int)$output[0]['no'];
+                $pdo->commit();
+                unset($pdo);
+                return $no;
+            }
+            else{
+                $pdo->rollBack();
+                unset($pdo);
+                throw new Exception('weird database error');
+            }
         }
         catch(PDOException $e)
         {

@@ -19,7 +19,7 @@ function generate_errors($fieldname, $errors){
     else return '';
 }
 
-$page=new PageWithHeader($data['loggedin'], $data['user-me']);
+$page=new PageWithHeader($data['loggedin'], $this->profile);
 $page->title('dits::create');
 
 $data['values'] = isset($data['values'])?$data['values']:['ditname' => '', 'url' => '', 'subtitle' => '', 'description' => ''];

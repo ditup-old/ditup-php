@@ -29,6 +29,7 @@ function route(Array $url){
         'map' => 'Map',
         'message' => 'Message',
         'messages' => 'Messages',
+        'notifications' => 'Notifications',
         'people' => 'People',
         'project' => 'Dit',
         'projects' => 'Projects',

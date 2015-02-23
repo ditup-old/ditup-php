@@ -2,7 +2,7 @@
 
 require_once '../app/views/general/PageWithHeader.php';
 
-$page=new PageWithHeader($data['loggedin'], $data['user-me']);
+$page=new PageWithHeader($data['loggedin'], $this->profile);
 $page->title('messages::received');
 $content = '<div><h1>Received Messages of User <a href="/user/'.$data['user-me'].'">'.$data['user-me'].'</a></h1>';
 foreach($data['messages'] as $msg){

@@ -2,15 +2,24 @@
 
 class Header
 {
-    function __construct($loggedin=false,$username='')
+    function __construct($loggedin=false, $profile=['username'=> '?', 'unseen_messages' => '?'])
     {
         $this->loggedin = $loggedin;
-        $this->user = $username;
+        $this->user = $profile['username'];
+        $this->profile=$profile;
         return $this;
     }
 
     function generate()
     {
+        $profile_picture='/img/no-picture.png';
+        if(file_exists('img/profile/'.$this->user.'.jpg')){
+             $profile_picture='/img/profile/'.$this->user.'.jpg';
+        }
+        elseif(file_exists('img/profile/'.$this->user.'.png')){
+             $profile_picture='/img/profile/'.$this->user.'.png';
+        }
+
         return '<div class="main-menu-top">
     <ul>
         <li><a href="/" ><img src="/img/logo.png" style="height:20px;" /> ditup</a>
@@ -44,7 +53,14 @@ class Header
         </li>
         <li>search <input /></li>' . ($this->loggedin ?
         '
-        <li>me
+        <li><div><a href="/user/'.$this->user.' "><img src="'.$profile_picture.'" style="height:30px;" />'.$this->user.'</a> <a href="/notifications">notifications (#)</a> <a href="/messages/received" >messages'
+        .(
+            $this->profile['unseen-messages']===0
+            ?
+            ''
+            :
+            ' ('.$this->profile['unseen-messages'].')'
+        ).'</a></div>
             <ul>
                 <li><a href="/user/' . $this->user . '">my profile</a></li>
                 <li><a href="/user/' . $this->user . '/settings">settings</a></li>

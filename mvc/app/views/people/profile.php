@@ -4,7 +4,7 @@ use Mrkvon\Ditup\View\User\UserPage as UserPage;
 
 require_once '../app/views/people/UserPage.php';
 
-$up=new UserPage($data['loggedin'], $data['user-me']);
+$up=new UserPage($data['loggedin'], $this->profile);
 $up->setUsername($data['member']);
 $up->setMe($data['user-me']===$data['member'] && $data['loggedin']);
 $up->title('main');

@@ -48,6 +48,21 @@ class Messages
         }
     }
 
+    public static function visitReceived($username){
+        require_once dirname(__FILE__).'/database/UserAccounts.php';
+        return (Database\UserAccounts::updateVisitReceivedMessages($username))?true:false;
+    }
+
+    public static function countUnseenMessages($username){
+        /**
+         * show messages which were received since last visit of user's received folder and are not read yet.
+         *
+         */
+         $number = Database\Messages::countUnseenMessages($username);            
+         if($number===false) throw new Exception('database error when trying to count unseen messages');
+         return $number;
+    }
+
     public static function saveDraftMessage($values){
         //if this was a draft
         if(isset($values['create-time'])&& $values['create-time']!==''){

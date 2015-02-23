@@ -10,7 +10,7 @@ use \PageWithHeader as Page;
 'answer' => $answer
 */
 
-$page = new Page($data['loggedin'], $data['user-me']);
+$page = new Page($data['loggedin'], $this->profile);
 //print_r($data);
 
 $awaiting = $data['awaiting-user'];

@@ -8,10 +8,11 @@ class PageWithHeader extends Page {
     protected $user_me='foo';
     protected $content='';
 
-    function __construct($loggedin=false, $user='foo'){
+    function __construct($loggedin=false, $profile=['username'=> '?', 'unseen-messages'=>'?']){
         $this->css($this->root_path.'css/header.css');
         $this->loggedin = $loggedin;
-        $this->user_me = $user;
+        $this->user_me = is_array($profile) ? (isset($profile['username'])?$profile['username']:'not-logged-in') : $profile;
+        $this->profile = (is_array($profile) && isset($profile['username'])) ? $profile : ['username' => $this->user_me, 'unseen-messages'=>'?'];
         return $this;
     }
 
@@ -32,7 +33,7 @@ class PageWithHeader extends Page {
         }
         
 
-        $hdr = (new Header($this->loggedin, $this->user_me))->generate();
+        $hdr = (new Header($this->loggedin, $this->profile))->generate();
         $content = $hdr.$this->content;
         $pg->add($content);
         return $pg->generate();

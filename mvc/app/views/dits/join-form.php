@@ -34,7 +34,7 @@ $values = isset($data['values']) ? $data['values'] : [
 $dit_url=$data['url'];
 $message_from_dit=$data['message-from-dit'];
 
-$page=new PageWithHeader($data['loggedin'], $data['user-me']);
+$page=new PageWithHeader($data['loggedin'], $this->profile);
 $page->title('dit::'.$data['url'].'::join');
 $content = '
     <div>

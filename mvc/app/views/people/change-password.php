@@ -22,7 +22,7 @@ function generate_errors($fieldname, $errors){
 }
 
 
-$page=new PageWithHeader($data['loggedin'], $data['user-me']);
+$page=new PageWithHeader($data['loggedin'], $this->profile);
 $page->title('change password');
 
 

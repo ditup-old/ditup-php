@@ -22,7 +22,7 @@ function generate_errors($fieldname, $errors){
 
 $errors = isset($data['errors']) ? $data['errors'] : [];
 
-$page=new PageWithHeader($data['loggedin'], $data['user']);
+$page=new PageWithHeader($data['loggedin'], $this->profile);
 $page->title('profile::' . $data['member'] . '::edit');
 
 $page->add(print_r($data,true).'<div>edit profile of ' . $data['member'] . '</div>

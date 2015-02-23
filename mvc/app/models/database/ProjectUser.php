@@ -51,7 +51,7 @@ class ProjectUser
         try
         {
             // Prepare the statements
-            $statement = $pdo->prepare('UPDATE project_user SET relationship=\'member\'
+            $statement = $pdo->prepare('UPDATE project_user SET relationship=\'member\', joined=UNIX_TIMESTAMP()
                 WHERE user_id IN (SELECT user_id FROM user_accounts WHERE username=:un)
                 AND project_id IN (SELECT project_id FROM projects WHERE url=:url)
                 AND relationship=\'await-member\'');
