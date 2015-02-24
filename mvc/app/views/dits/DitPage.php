@@ -50,7 +50,7 @@ class DitPage extends PageWithHeader {
     }
     
     public function generate(){
-        $pgh = new PageWithHeader($this->loggedin, $this->user_me);
+        $pgh = new PageWithHeader($this->loggedin, $this->profile);
         foreach($this->js as $js){
             $pgh->js($js);
         }

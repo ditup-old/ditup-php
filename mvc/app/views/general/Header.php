@@ -53,14 +53,7 @@ class Header
         </li>
         <li>search <input /></li>' . ($this->loggedin ?
         '
-        <li><div><a href="/user/'.$this->user.' "><img src="'.$profile_picture.'" style="height:30px;" />'.$this->user.'</a> <a href="/notifications"><span class="fa fa-bell-o" ></span> (#)</a> <a href="/messages/received" ><span class="fa fa-envelope-o" ></span>'
-        .(
-            $this->profile['unseen-messages']===0
-            ?
-            ''
-            :
-            ' ('.$this->profile['unseen-messages'].')'
-        ).'</a></div>
+        <li><a href="/user/'.$this->user.' "><img src="'.$profile_picture.'" style="height:30px;" />'.$this->user.'</a>
             <ul>
                 <li><a href="/user/' . $this->user . '">my profile</a></li>
                 <li><a href="/user/' . $this->user . '/settings">settings</a></li>
@@ -74,6 +67,27 @@ class Header
         ':
         '<li><a href="/login" >login</a></li>
         <li><a href="/signup" >signup</a></li>') . '
+        ' . ($this->loggedin ?
+        '
+        <li><a href="/notifications"><span class="fa fa-bell-o" ></span>'
+        .(
+            $this->profile['notifications']===0
+            ?
+            ''
+            :
+            ' ('.$this->profile['notifications'].')'
+        ).'
+        </a> <a href="/messages/received" ><span class="fa fa-envelope-o" ></span>'
+        .(
+            $this->profile['unseen-messages']===0
+            ?
+            ''
+            :
+            ' ('.$this->profile['unseen-messages'].')'
+        ).
+        '</a></li>'
+        :
+        '').'
     </ul>
 </div>';
     }

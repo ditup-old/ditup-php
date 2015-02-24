@@ -36,7 +36,7 @@ class UserPage extends PageWithHeader {
     }
     
     public function generate(){
-        $pgh = new PageWithHeader($this->loggedin, $this->user_me);
+        $pgh = new PageWithHeader($this->loggedin, $this->profile);
         foreach($this->js as $js){
             $pgh->js($js);
         }
@@ -70,12 +70,11 @@ class UserPage extends PageWithHeader {
             ''
             :
             '
-                <li>create connection (friends etc.)</li>'
-            ).
-            '
+                <li>create connection (friends etc.)</li>
                 <li>follow</li>
                 <li>reference, comment</li>
-                <li>chat</li>'.
+                <li>chat</li>'
+            ).
             (
             $this->is_me ? 
             '

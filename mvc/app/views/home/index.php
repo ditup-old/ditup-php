@@ -2,7 +2,7 @@
 
 require_once '../app/views/general/PageWithHeader.php';
 
-$page=new PageWithHeader($data['loggedin'],$data['user-me']);
+$page=new PageWithHeader($data['loggedin'], $this->profile);
 $page->title('main page');
 
 $content = '<div>

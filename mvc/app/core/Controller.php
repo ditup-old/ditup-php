@@ -76,6 +76,10 @@ class Controller
             $unseen_messages = $messages_sm::countUnseenMessages($this->username);
             $this->profile['username'] = $this->username;
             $this->profile['unseen-messages'] = $unseen_messages;
+
+            $notices_sm = self::staticModel('Notifications');
+            $notices = $notices_sm::countNotifications($this->username);
+            $this->profile['notifications'] = $notices;
         }
 
         require_once '../app/views/' . $view . '.php';

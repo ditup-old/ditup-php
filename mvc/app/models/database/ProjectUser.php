@@ -217,6 +217,49 @@ class ProjectUser
         return false;
     }
 
+    public static function selectJoinNotifications($username){
+        /**
+         * select information about people who want to join some of projects where you're admin.
+         *
+         */
+        $pdo = self::newPDO();
+        // Start the transaction. PDO turns autocommit mode off depending on the driver, you don't need to implicitly say you want it off
+        $pdo->beginTransaction();
+        // 
+        try
+        {
+            // Prepare the statements
+            $statement = $pdo->prepare('SELECT uaaw.username username, pr.projectname ditname, pr.type type, pr.url url  FROM project_user AS pume
+            INNER JOIN project_user AS puaw ON pume.project_id=puaw.project_id
+            INNER JOIN user_accounts AS uaaw ON uaaw.user_id=puaw.user_id
+            INNER JOIN projects pr ON pume.project_id=pr.project_id
+            WHERE pume.user_id IN
+                (SELECT user_id FROM user_accounts uame WHERE uame.username=:unme)
+            AND pume.relationship=\'admin\'
+            AND puaw.relationship=\'await-member\'
+            ');
+            $statement->bindValue(':unme',strval($username), PDO::PARAM_STR);
+            $statement->execute();
+            
+            $data = $statement->fetchAll(PDO::FETCH_ASSOC);
+            unset($statement);
+
+            $pdo->commit();
+            unset($pdo);
+            return $data;
+        }
+        catch(PDOException $e)
+        {
+            $pdo->rollBack();
+            unset($pdo);
+            $error=print_r($e, false);
+            return false;
+            //throw new Exception('database problem: ' . $e);
+        }
+        unset($pdo);
+        return false;
+    }
+
     public static function selectJoinMessage($url, $username){
         /**
          * 
