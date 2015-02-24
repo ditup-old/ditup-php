@@ -12,7 +12,7 @@ searchability of project can be set p:Projects U:3 I:3 T:1H S:2015-01-29
 it is possible to show if project looks for/accepts people. p:Projects U:3 I:3 T:1H S:2015-01-29
 submit your idea to project as an outsider to make it better. p:Projects U:3 I:3 T:1H S:2015-01-29
 next actions deciding p:Projects U:3 I:3 T:1H S:2015-01-29
-design search p:Search U:3 I:3 T:1H S:2015-01-29
+design search p:Search U:3 I:5 T:1H S:2015-01-29
 search by tags p:Search U:3 I:3 T:1H S:2015-01-29
 search projects by tags p:Search U:3 I:3 T:1H S:2015-01-29
 search projects by interests p:Search U:3 I:3 T:1H S:2015-01-29
@@ -25,12 +25,10 @@ design tags and make next actions/todos p:Tags U:3 I:3 T:1H S:2015-01-29
 add profile picture, show profile picture, delete profile picture p:User U:3 I:3 T:1H S:2015-01-29
 design nice UX for profile pic. (selecting square for profile pic etc.) p:User U:3 I:3 T:1H S:2015-01-29
 shall we have user photos? (probably not, user can link to some photo galleries) p:User U:3 I:3 T:1H S:2015-01-29
-design references @User U:3 I:3 T:1H S:2015-01-29
+design references p:User U:3 I:3 T:1H S:2015-01-29
 ??reputation (by activity, project membership and votes/references from others) : general reputation, reputation connected to project activity (member/admin/supporter) p:User U:3 I:3 T:1H S:2015-01-29
 design and create map of people and projects p:Map U:3 I:3 T:1H S:2015-01-29
 design and create feedback p:Feedback U:3 I:3 T:1H S:2015-01-30
-fix bug of redirecting after login ($_SESSION['previous_uri'] etc.) when the page was not found, it shouldn't redirect there. p:Bug U:3 I:3 T:1H S:2015-02-06
-create adding people to dit U:3 I:3 T:1H S:2015-02-07
 fix all foreign keys in database p:database U:3 I:3 T:1H S:2015-02-08
 add some indexes to database ; p:database U:3 I:3 T:1H S:2015-02-08
 design adding friends p:User U:3 I:3 T:1H S:2015-02-08

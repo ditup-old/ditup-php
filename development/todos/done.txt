@@ -1,1 +1,2 @@
-fix verifying rooting bug U:5 I:5 C:100 T:1H S:2015-02-11 E:2015-02-11
+fix bug of redirecting after login ($_SESSION['previous_uri'] etc.) when the page was not found, it shouldn't redirect there. p:Bug U:3 I:3 C:100 T:1H S:2015-02-06 E:2015-02-24
+create adding people to dit U:3 I:3 C:100 T:1H S:2015-02-07 E:2015-02-24
