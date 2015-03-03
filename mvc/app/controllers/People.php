@@ -12,6 +12,14 @@ class People extends Controller
 
     public function index($action='')
     {
-        $this->view('people/index', ['loggedin' => $this->loggedin, 'user' => $this->username]);
+        $people_sm=$this::staticModel('User');
+        $username=$this->username;
+
+        $this->view('people/index', [
+            'user-amount-all' => $people_sm::countUsers($username, 'all'),
+            'user-amount-month' => $people_sm::countUsers($username, 'month'),
+            'user-amount-week' => $people_sm::countUsers($username, 'week'),
+            'user-amount-day' => $people_sm::countUsers($username, 'day')
+        ]);
     }
 }

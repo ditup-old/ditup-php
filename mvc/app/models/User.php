@@ -294,5 +294,20 @@ class User
         }
         else throw new Exception('first parameter should be array(username, old-password, new-password, new-password2)');
     }
+    
+    public static function countUsers($username, $active='all'){
+        $time=null;
+        if($active==='all'){
+            $time=null;
+        }elseif($active==='month'){
+            $time=30*24*3600;
+        }elseif($active==='week'){
+            $time=7*24*3600;
+        }elseif($active==='day'){
+            $time=24*3600;
+        }
 
+        $data = Database\UserAccounts::countUsers($username, $time);
+        return $data;
+    }
 }

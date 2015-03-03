@@ -7,6 +7,7 @@ use Exception;
 
 require_once dirname(__FILE__).'/database/Projects.php';
 require_once dirname(__FILE__).'/database/ProjectUser.php';
+require_once dirname(__FILE__).'/database/Notifications.php';
 
 class Notifications
 {
@@ -16,7 +17,11 @@ class Notifications
     }
 
     public static function countNotifications($username){
-        return 5;
+        return Database\Notifications::countNewNotifications($username);
+    }
+
+    public static function createJoinNotification($for_username, $await_username, $dit_url){
+        $awaiting=Database\Notifications::insertNotification($username, $type, ['about-user' => $await_username, 'about-dit' =>$dit_url]);
     }
 
     private static function getJoinNotifications($username){

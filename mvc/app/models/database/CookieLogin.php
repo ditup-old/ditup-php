@@ -173,7 +173,7 @@ class CookieLogin
                 $statement->execute();
       //
                 $pdo->commit();
-                echo 'in update in database';
+                //echo 'in update in database';
             }
             catch(PDOException $e)
             {

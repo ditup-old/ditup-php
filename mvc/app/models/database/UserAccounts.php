@@ -321,4 +321,55 @@ class UserAccounts extends DbAccess
         unset($pdo);
 
     }
+
+    public static function countUsers($username, $time=null){
+    /**
+     * return number of users who were active in last $time seconds.
+     * if $time===null, return number of all users.
+     * else return false
+     */
+        require_once dirname(__FILE__).'/db-login.php';
+        $pdo = new PDO('mysql:host='.Login\HOSTNAME.';dbname='. Login\DATABASE .';charset=utf8', Login\USERNAME, Login\PASSWORD);
+    
+    //****************without these lines it will not catch error and not transaction well. not rollback.********
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+        // Start the transaction. PDO turns autocommit mode off depending on the driver, you don't need to implicitly say you want it off
+        $pdo->beginTransaction();
+        // 
+        try
+        {
+            // Prepare the statements
+            if($time===null){
+                $statement=$pdo->prepare('SELECT COUNT(ua.user_id) no FROM user_accounts ua
+                WHERE ua.verified
+                ');
+            }
+            else{
+                $statement=$pdo->prepare('SELECT COUNT(ua.user_id) no FROM user_accounts ua
+                WHERE (UNIX_TIMESTAMP()-ua.last_login)<:time
+                AND ua.last_login IS NOT NULL
+                AND ua.verified
+                ');
+                $statement->bindValue(':time',strval($time), PDO::PARAM_STR);
+            }
+            $statement->execute();
+
+            $data = $statement->fetchAll(PDO::FETCH_ASSOC);
+            $no=$data['0']['no']*1;
+            unset($pdo);
+            return $no;
+        }
+        catch(PDOException $e)
+        {
+          $pdo->rollBack();
+      
+          echo print_r($e,true);
+          return false;
+
+          // Report errors
+        }
+        unset($pdo);
+
+    }
 }
