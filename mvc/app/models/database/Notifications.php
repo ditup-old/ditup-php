@@ -10,9 +10,77 @@ require_once dirname(__FILE__).'/db-login.php';
 
 class Notifications
 {
-    
-    public static function insertNotification($type, $values){
-        
+    public static function insertJoinRequestNotifications($username, $dit_url){
+        $pdo=self::newPDO();
+        $pdo->beginTransaction();
+
+        try
+        {
+            $statement=$pdo->prepare('INSERT INTO notifications (user_id, type, create_time, about_user_id, about_dit_id)
+            SELECT du.user_id, \'await-join\', UNIX_TIMESTAMP(), ua.user_id, du.project_id
+            FROM user_accounts ua, project_user du
+            WHERE ua.username=:un
+            AND du.project_id IN
+                (SELECT project_id FROM projects WHERE url=:url)
+            AND du.relationship=\'admin\'
+            ');
+            $statement->bindValue(':un', strval($username), PDO::PARAM_STR);
+            $statement->bindValue(':url', strval($dit_url), PDO::PARAM_STR);
+            $statement->execute();
+            
+            $no = $statement->rowCount();
+
+            if($no>=1){
+                $pdo->commit();
+                unset($pdo);
+                return true;
+            }
+            elseif($no===0){
+                //there is no admins to process join request
+                $pdo->rollBack();
+                unset($pdo);
+                return false;
+            }
+            else{
+                $pdo->rollBack();
+                unset($pdo);
+                return null;
+            }
+        }
+        catch(PDOException $e){
+            $pdo->rollBack();
+            unset($pdo);
+            exit(print_r($e, true));
+        }
+    }
+
+    public static function deleteJoinRequestNotifications($about_username, $about_dit_url){
+        $pdo=self::newPDO();
+        $pdo->beginTransaction();
+
+        try
+        {
+            $statement=$pdo->prepare('DELETE FROM notifications
+            WHERE about_user_id IN
+                (SELECT user_id FROM user_accounts WHERE username=:un)
+            AND about_dit_id IN
+                (SELECT project_id FROM projects WHERE url=:url)
+            ');
+            $statement->bindValue(':un', strval($about_username), PDO::PARAM_STR);
+            $statement->bindValue(':url', strval($about_dit_url), PDO::PARAM_STR);
+            $statement->execute();
+            
+//            $no = $statement->rowCount();
+
+            $pdo->commit();
+            unset($pdo);
+            return true;
+        }
+        catch(PDOException $e){
+            $pdo->rollBack();
+            unset($pdo);
+            exit(print_r($e, true));
+        }
     }
 
     public static function updateNotificationViewTime($id, $username){

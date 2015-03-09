@@ -197,15 +197,19 @@ class Dit extends Controller
             $membership=$project_class::getUserMembership($this->username, $dit_url);
             if(sizeof($membership)===0 || (!in_array('admin', $membership) && !in_array('member', $membership) && !in_array('await-member', $membership))){
                 if(isset($_POST, $_POST['submit'])&&$_POST['submit']==='cancel'){
+                    //*******canceling
                     header('Location:/dit/'.$dit_url);
                     exit();
                 }
                 elseif(isset($_POST, $_POST['request-message'], $_POST['submit'])){
+                    //*******submitting join request
                     $form_data=[
                         'request-message' => $_POST['request-message']
                     ];
                     $errors=[];
                     if($project_class::sendJoinRequest($this->username, $dit_url, $form_data, $errors)){
+                        $note_sm=$this::staticModel('Notifications');
+                        $note_success=$note_sm::createJoinRequestNotifications($this->username, $dit_url);
                         $this->view('general/message', [
                             'loggedin' => $this->loggedin,
                             'user-me' => $this->username,
@@ -269,9 +273,9 @@ class Dit extends Controller
                     if($all_url[4]==='accept'){
                     //    exit('accept');
                         if(isset($_POST, $_POST['accept'], $_POST['message'])){
-                            //put member to database...
+                            //********put member to database...
                             if($dit_usr_class::acceptUserToDit($awaiting, $url)){
-                                //send new member a welcoming message;
+                                //*******send new member a welcoming message;
                                 $messages_class=self::staticModel('Messages');
                                 $messages_class::sendMessage([
                                     'from-project' => $url,
@@ -281,6 +285,10 @@ class Dit extends Controller
                                     'subject' => 'you are now member of '.$dit_type.' '.$url,
                                     'message' => $_POST['message']
                                 ]);
+                                //*******remove JoinRequest notifications (out of date)
+                                $notif_sm=self::staticModel('Notifications');
+                                $notif_sm::deleteJoinRequestNotifications($awaiting, $url);
+
                                 exit('user was accepted');
                             }
                         }
@@ -315,6 +323,10 @@ class Dit extends Controller
                                     'subject' => 'you were not accepted to '.$dit_type.' '.$url,
                                     'message' => $_POST['message']
                                 ]);
+                                //*******remove JoinRequest notifications (out of date)
+                                $notif_sm=self::staticModel('Notifications');
+                                $notif_sm::deleteJoinRequestNotifications($awaiting, $url);
+
                                 exit('user was declined');
                             }
                         }

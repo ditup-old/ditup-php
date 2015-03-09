@@ -45,8 +45,12 @@ class Notifications
     public static function createJoinRequestNotifications($about_username, $about_dit_url){
         //this function should be used when user requests joining some group
         //it should create join-request notifications for everybody who has right to accept new members (i.e. admins)
-        $success=Database\Notifications::insertNotifications($type, ['about-user' => $about_username, $about_dit_url]);
+        $success=Database\Notifications::insertJoinRequestNotifications($about_username, $about_dit_url);
         return $success;
+    }
+
+    public static function deleteJoinRequestNotifications($about_username, $about_dit_url){
+        return Database\Notifications::deleteJoinRequestNotifications($about_username, $about_dit_url);
     }
 
     public static function deleteNotification($notification_id, $username){
@@ -80,10 +84,6 @@ class Notifications
         return $success;
     }
 
-    public static function deleteJoinRequestNotifications($about_username, $about_dit_url){
-    
-    }
-    
     private static function processJoinRequestNotification($data){
         $ret=[
             'text' => 'User '.$data['username'].' wants to join '.$data['dittype'].':'.$data['ditname'].'.',
