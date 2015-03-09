@@ -23,13 +23,13 @@ echo '<!DOCTYPE html>
         </header>
         <div class="start-image-info">';
         $image_list=array(
-            'http://fc02.deviantart.net/fs71/f/2012/291/a/4/yoonsic_pink_edit_by_helena_10-d5i6hws.jpg',
-            'http://upload.wikimedia.org/wikipedia/commons/4/4a/Adelie_chicks_in_antarctica_and_Ms_Explorer.jpg',
-            'http://upload.wikimedia.org/wikipedia/commons/5/52/Bread-band-oct1970.jpg',
-            'http://upload.wikimedia.org/wikipedia/commons/4/4f/Second_aliyah_Pioneers_in_Migdal_1912_in_kuffiyeh.jpg',
-            'http://www.jisc.ac.uk/sites/default/files/ideas-campaign.jpg',
-            'http://fc03.deviantart.net/fs71/i/2013/215/9/9/false_memory_by_scottman2th-d6gg85l.jpg',
-            'http://upload.wikimedia.org/wikipedia/commons/5/59/Spencer_Tunick_Nude_Installation.jpg'
+            'https://fc02.deviantart.net/fs71/f/2012/291/a/4/yoonsic_pink_edit_by_helena_10-d5i6hws.jpg',
+            'https://upload.wikimedia.org/wikipedia/commons/4/4a/Adelie_chicks_in_antarctica_and_Ms_Explorer.jpg',
+            'https://upload.wikimedia.org/wikipedia/commons/5/52/Bread-band-oct1970.jpg',
+            'https://upload.wikimedia.org/wikipedia/commons/4/4f/Second_aliyah_Pioneers_in_Migdal_1912_in_kuffiyeh.jpg',
+            'https://www.jisc.ac.uk/sites/default/files/ideas-campaign.jpg',
+            'https://fc03.deviantart.net/fs71/i/2013/215/9/9/false_memory_by_scottman2th-d6gg85l.jpg',
+            'https://upload.wikimedia.org/wikipedia/commons/5/59/Spencer_Tunick_Nude_Installation.jpg'
         );
         echo '<div class="start-image"><img class="flip-vertical" title="random picture" src="'.$image_list[rand(0,sizeof($image_list)-1)].'"></img>
         The picture is random. If you don\'t like it, reload the page.

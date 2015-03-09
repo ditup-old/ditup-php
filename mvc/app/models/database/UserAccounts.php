@@ -12,6 +12,31 @@ require_once dirname(__FILE__).'/DbAccess.php';
 class UserAccounts extends DbAccess
 {
 
+    public static function updateVisitNotifications($username){
+        $pdo=self::newPDO();
+        $pdo->beginTransaction();
+        try
+        {
+            // Prepare the statements
+            $statement=$pdo->prepare('UPDATE user_accounts SET visit_notifications=UNIX_TIMESTAMP() WHERE username=:un');
+            $statement->bindValue(':un',strval($username), PDO::PARAM_STR);
+            $statement->execute();
+            
+            $pdo->commit();
+            
+            unset($pdo);
+            return true;
+        }
+        catch(PDOException $e)
+        {
+            $pdo->rollBack();
+      
+            // Report errors
+            unset($pdo);
+            exit(print_r($e, true));
+        }
+    }
+
     public static function insertIntoDatabase(Array $values){
         if(isset($values, $values['username'], $values['email'], $values['password'], $values['salt'], $values['iterations'])){
             $pdo = new PDO('mysql:host='.Login\HOSTNAME.';dbname='. Login\DATABASE .';charset=utf8', Login\USERNAME, Login\PASSWORD);
@@ -371,5 +396,15 @@ class UserAccounts extends DbAccess
         }
         unset($pdo);
 
+    }
+
+    private static function newPDO(){
+        $pdo = new PDO('mysql:host='.Login\HOSTNAME.';dbname='. Login\DATABASE .';charset=utf8', Login\USERNAME, Login\PASSWORD);
+    
+    //****************without these lines it will not catch error and not transaction well. not rollback.********
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+        // Start the transaction. PDO turns autocommit mode off depending on the driver, you don't need to implicitly say you want it off
+        return $pdo;
     }
 }
