@@ -33,8 +33,9 @@ function route(Array $url){
         'people' => 'People',
         'project' => 'Dit',
         'projects' => 'Projects',
-        'start' => 'Start',
+        'search' => 'Search',
         'signup' => 'Signup',
+        'start' => 'Start',
         'user' => 'User'
     ];
 

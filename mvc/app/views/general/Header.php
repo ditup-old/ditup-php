@@ -51,7 +51,9 @@ class Header
                 <li><a href="/map">map</a></li>
             </ul>
         </li>
-        <li>search <input /></li>' . ($this->loggedin ?
+        <li><form method="post" action="/search"><input type="text" name="search-string" /><button type="submit" name="search" ><span class="fa fa-search" ></span></button></form></li>'
+        
+        . ($this->loggedin ?
         '
         <li><a href="/user/'.$this->user.' "><img src="'.$profile_picture.'" style="height:30px;" />'.$this->user.'</a>
             <ul>
