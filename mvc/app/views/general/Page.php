@@ -8,7 +8,8 @@ class Page{
     protected $head=array('title'=>'','css'=>['/css/reset.css', '/fonts/font-awesome-4.3.0/css/font-awesome.min.css']);
     protected $body='';
     /**scripts are [{link:"",properties{name:value}}] **/
-    protected $js=array();
+    protected $js=[
+    ];
 
 
     function __construct(){
@@ -85,6 +86,7 @@ _END;
         
         foreach($this->js as $script)
         {
+            //exit(print_r($script, true));
             $code.='<script src="'.$script['link'].'" ';
             //data-main="js/App" 
             foreach($script['properties'] as $name=>$value){

@@ -51,7 +51,7 @@ class Header
                 <li><a href="/map">map</a></li>
             </ul>
         </li>
-        <li><form method="post" action="/search"><input type="text" name="search-string" /><button type="submit" name="search" ><span class="fa fa-search" ></span></button></form></li>'
+        <li><form id="search-form-header" method="post" action="/search"><input type="text" name="search-string" /><button type="submit" name="search" ><span class="fa fa-search" ></span></button></form></li>'
         
         . ($this->loggedin ?
         '

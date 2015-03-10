@@ -9,6 +9,7 @@ function route(Array $url){
     ****/
 
     $controllers=[
+        'ajax-search' => 'AjaxSearch',
         'change-password' => 'ChangePassword',
         'community' => 'Community',
 	'dit' => 'Dit',

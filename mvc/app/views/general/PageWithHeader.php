@@ -10,6 +10,9 @@ class PageWithHeader extends Page {
 
     function __construct($loggedin=false, $profile=['username'=> '?', 'unseen-messages'=>'?']){
         $this->css($this->root_path.'css/header.css');
+        $this->js($this->root_path.'js/libs/jquery-2.1.3.min.js');
+        $this->js($this->root_path.'js/ajax-search-header.js');
+        //print_r($this->js);
         $this->loggedin = $loggedin;
         $this->user_me = is_array($profile) ? (isset($profile['username'])?$profile['username']:'not-logged-in') : $profile;
         $this->profile = (is_array($profile) && isset($profile['username'])) ? $profile : ['username' => $this->user_me, 'unseen-messages'=>'?'];
@@ -29,7 +32,7 @@ class PageWithHeader extends Page {
         }
         $pg->title($this->head['title']);
         foreach($this->js as $js){
-            $pg->js($js);
+            $pg->js($js['link'], $js['properties']);
         }
         
 
