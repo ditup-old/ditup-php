@@ -52,7 +52,7 @@ class Header
             </ul>
         </li>
         <li><form id="search-form-header" method="post" action="/search"><input type="text" name="search-string" /><button type="submit" name="search" ><span class="fa fa-search" ></span></button></form>
-	<div id="search-form-header-results" >asdf</div>
+	<div id="search-form-header-results" ></div>
 	</li>'
         
         . ($this->loggedin ?

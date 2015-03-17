@@ -38,7 +38,7 @@ class UserPage extends PageWithHeader {
     public function generate(){
         $pgh = new PageWithHeader($this->loggedin, $this->profile);
         foreach($this->js as $js){
-            $pgh->js($js);
+            $pgh->js($js['link'], $js['properties']);
         }
         foreach($this->head['css'] as $css){
             $pgh->css($css);

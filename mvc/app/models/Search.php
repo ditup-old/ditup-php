@@ -21,6 +21,21 @@ class Search
 
     public static function searchUsers($szuk, $options=[], $username=''){
         $users=Database\Search::selectUsersSearch($szuk);
+
+        foreach($users as $key=>$user){
+            $name=$user['username'];
+            $profile_picture='/img/no-picture.png';
+            if(file_exists('img/profile/'.$name.'.jpg')){
+                $profile_picture='/img/profile/'.$name.'.jpg';
+            }
+            elseif(file_exists('img/profile/'.$name.'.png')){
+                $profile_picture='/img/profile/'.$name.'.png';
+            }
+            $users[$key]['img']=$profile_picture;
+            
+        }
+
+
         return $users;
     }
 

@@ -38,6 +38,7 @@ class Page{
             $script['properties'][$name]=$value;
         }
         $this->js[]=$script;
+//        echo(print_r($this->js, true));
         return $this;
     }
   
@@ -83,10 +84,10 @@ _END;
         $code.= $this->body;
 
         /**scripts adding**/
-        
+        //exit(print_r($this->js, true));
         foreach($this->js as $script)
         {
-            //exit(print_r($script, true));
+            //echo(print_r($script['link'], true));
             $code.='<script src="'.$script['link'].'" ';
             //data-main="js/App" 
             foreach($script['properties'] as $name=>$value){

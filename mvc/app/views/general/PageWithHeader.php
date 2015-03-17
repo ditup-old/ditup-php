@@ -32,7 +32,9 @@ class PageWithHeader extends Page {
         }
         $pg->title($this->head['title']);
         foreach($this->js as $js){
+            //print_r($js['link']);
             $pg->js($js['link'], $js['properties']);
+            //echo 'hello'.print_r($pg->js, true);
         }
         
 

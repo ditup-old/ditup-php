@@ -58,7 +58,8 @@ $content = '
                     <tr><th>stats</th><td>profile views</td><td>' . 'implement!' . '</td></tr>
                 </tbody>
             </table>'
-            .print_r($data,true).'
+//            .print_r($data,true)
+.'
 ';
 
 $up->add($content);
