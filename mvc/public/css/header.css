@@ -47,3 +47,32 @@ div.main-menu-top>ul ul
 div.main-menu-top>ul
 {
 }
+
+span.span-image{
+    display:inline-block;
+    background-position-x:center;
+    background-position-y:center;
+    background-repeat:no-repeat;
+    -webkit-background-size: 100%; /* For WebKit*/
+    -moz-background-size: 100%;    /* Mozilla*/
+    -o-background-size: 100%;      /* Opera*/
+    background-size: 100%;         /* Generic*/
+}
+
+#header-ditup-logo{
+    height:30px;
+    width:30px;
+    -webkit-background-size: 100%; /* For WebKit*/
+    -moz-background-size: 100%;    /* Mozilla*/
+    -o-background-size: 100%;      /* Opera*/
+    background-size: 100%;         /* Generic*/
+}
+
+#header-user-avatar{
+    height:30px;
+    width:30px;
+    -webkit-background-size: 100%; /* For WebKit*/
+    -moz-background-size: 100%;    /* Mozilla*/
+    -o-background-size: 100%;      /* Opera*/
+    background-size: 100%;         /* Generic*/
+}

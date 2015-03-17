@@ -42,7 +42,7 @@
 
   var Output=(function(SearchName){
     var user=function(userdata, substring){
-      var pic = $(document.createElement('img')).attr({src: userdata.img}).css({height:'20px'});
+      var pic = $(document.createElement('span')).css({height:'20px', width:'20px', 'background-image':'url('+userdata.img+')'}).addClass('span-image');
       var link = $(document.createElement('a')).attr({href: '/user/'+userdata.username}).append(pic).append(SearchName(userdata.username, substring));
       var ret = $(document.createElement('div')).append(link).css({color:'red', 'background-color':'white'});
 

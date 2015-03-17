@@ -4,12 +4,15 @@ div.profile-header
     min-height:100px;
 }
 
-div.profile-header>img.header-avatar
+span.profile-header-avatar
 {
     height:100px;
     width:100px;
-    background-color:red;
     float:left;
+    -webkit-background-size: 100%; /* For WebKit*/
+    -moz-background-size: 100%;    /* Mozilla*/
+    -o-background-size: 100%;      /* Opera*/
+    background-size: 100%;         /* Generic*/
 }
 
 h1.header-user-name

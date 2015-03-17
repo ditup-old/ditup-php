@@ -22,7 +22,7 @@ class Header
 
         return '<div class="main-menu-top">
     <ul>
-        <li><a href="/" ><img src="/img/logo.png" style="height:20px;" /> ditup</a>
+        <li><a href="/" ><span id="header-ditup-logo" class="span-image" style="background-image:url(/img/logo.png)"></span> ditup</a>
             <ul>
                 <li><a href="/start">about</a></li>
                 <li><a href="/development">development</a></li>
@@ -57,7 +57,7 @@ class Header
         
         . ($this->loggedin ?
         '
-        <li><a href="/user/'.$this->user.' "><img src="'.$profile_picture.'" style="height:30px;" />'.$this->user.'</a>
+        <li><a href="/user/'.$this->user.' "><span id="header-user-avatar" class="span-image" style="background-image:url('.$profile_picture.')"></span>'.$this->user.'</a>
             <ul>
                 <li><a href="/user/' . $this->user . '">my profile</a></li>
                 <li><a href="/user/' . $this->user . '/settings">settings</a></li>

@@ -56,7 +56,7 @@ class UserPage extends PageWithHeader {
     <div>
         <!--each of these menu things will be optional-->
         <div class="profile-header" >
-            <img class="header-avatar" src="'.$profile_picture.'" /><h1 class="header-user-name">'. $this->username . '</h1>
+            <span class="profile-header-avatar span-image" style="background-image:url('.$profile_picture.')" ></span><h1 class="header-user-name">'. $this->username . '</h1>
             <ul class="header-action-menu">'.
             (
             $this->is_me ? 
