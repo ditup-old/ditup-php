@@ -57,6 +57,7 @@ span.span-image{
     -moz-background-size: 100%;    /* Mozilla*/
     -o-background-size: 100%;      /* Opera*/
     background-size: 100%;         /* Generic*/
+    float:left;
 }
 
 #header-ditup-logo{
