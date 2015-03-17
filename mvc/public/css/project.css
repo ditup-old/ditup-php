@@ -4,13 +4,12 @@ div.project-header
     min-height:100px;
 }
 
-/*div.project-header>img.header-avatar
+span.dit-header-avatar
 {
     height:100px;
     width:100px;
-    background-color:green;
     float:left;
-}*/
+}
 
 h1.header-project-name
 {

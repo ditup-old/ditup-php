@@ -63,7 +63,7 @@ class DitPage extends PageWithHeader {
     <div>
         <!--each of these menu things will be optional. no need to "support" or "follow" etc. <br /-->
         <div class="project-header" >
-            <!--img class="header-avatar" src="" /-->
+            <span class="dit-header-avatar span-image" style="background-image:url(/img/logo.png)" ></span>
             <h1 class="header-project-name">'. $this->projectname . '</h1>
             <span>'.$this->subtitle.'</span>
             <ul class="header-action-menu">'
