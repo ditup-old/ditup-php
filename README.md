@@ -1,6 +1,8 @@
 # ditup
 online platform for real world collaboration
 
+new version written in nodejs is (going to be) available at https://github.com/ditup/ditup
+
 ##development
 
 ###technology
